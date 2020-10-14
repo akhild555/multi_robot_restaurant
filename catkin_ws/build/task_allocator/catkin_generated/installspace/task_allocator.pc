@@ -1,0 +1,8 @@
+prefix=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/install
+
+Name: task_allocator
+Description: Description of task_allocator
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/src/task_allocator/src/hungarian.cpp
+iostream
+-
+cstring
+-
+hungarian.h
+/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/src/task_allocator/src/hungarian.h
+
+/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/src/task_allocator/src/hungarian.h
+

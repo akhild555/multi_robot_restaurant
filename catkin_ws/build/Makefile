@@ -1103,6 +1103,19 @@ amrl_shared_lib/fast:
 	$(MAKE) -f control_stack/lib/shared/CMakeFiles/amrl_shared_lib.dir/build.make control_stack/lib/shared/CMakeFiles/amrl_shared_lib.dir/build
 .PHONY : amrl_shared_lib/fast
 
+#=============================================================================
+# Target rules for targets named job_assignment
+
+# Build rule for target.
+job_assignment: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 job_assignment
+.PHONY : job_assignment
+
+# fast build rule for target.
+job_assignment/fast:
+	$(MAKE) -f task_allocator/CMakeFiles/job_assignment.dir/build.make task_allocator/CMakeFiles/job_assignment.dir/build
+.PHONY : job_assignment/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -1188,6 +1201,7 @@ help:
 	@echo "... topic_tools_generate_messages_nodejs"
 	@echo "... actionlib_generate_messages_py"
 	@echo "... amrl_shared_lib"
+	@echo "... job_assignment"
 .PHONY : help
 
 

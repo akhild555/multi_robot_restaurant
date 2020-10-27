@@ -5,4 +5,4 @@ Description: Description of task_allocator
 Version: 0.0.0
 Cflags: 
 Libs: -L${prefix}/lib 
-Requires: 
+Requires: roscpp rospy std_msgs

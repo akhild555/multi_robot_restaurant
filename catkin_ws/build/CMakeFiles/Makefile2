@@ -697,7 +697,7 @@ clean: control_stack/CMakeFiles/std_srvs_generate_messages_lisp.dir/clean
 control_stack/CMakeFiles/util_lib.dir/all:
 	$(MAKE) -f control_stack/CMakeFiles/util_lib.dir/build.make control_stack/CMakeFiles/util_lib.dir/depend
 	$(MAKE) -f control_stack/CMakeFiles/util_lib.dir/build.make control_stack/CMakeFiles/util_lib.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles --progress-num=35,36,37,38 "Built target util_lib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles --progress-num=38,39,40,41 "Built target util_lib"
 .PHONY : control_stack/CMakeFiles/util_lib.dir/all
 
 # Include target in all.
@@ -1280,7 +1280,7 @@ control_stack/CMakeFiles/sine_controller.dir/all: control_stack/CMakeFiles/nav_l
 control_stack/CMakeFiles/sine_controller.dir/all: control_stack/lib/shared/CMakeFiles/amrl_shared_lib.dir/all
 	$(MAKE) -f control_stack/CMakeFiles/sine_controller.dir/build.make control_stack/CMakeFiles/sine_controller.dir/depend
 	$(MAKE) -f control_stack/CMakeFiles/sine_controller.dir/build.make control_stack/CMakeFiles/sine_controller.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles --progress-num=33,34 "Built target sine_controller"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles --progress-num=36,37 "Built target sine_controller"
 .PHONY : control_stack/CMakeFiles/sine_controller.dir/all
 
 # Include target in all.
@@ -1414,7 +1414,7 @@ control_stack/CMakeFiles/nav_lib.dir/all: control_stack/CMakeFiles/util_lib.dir/
 control_stack/CMakeFiles/nav_lib.dir/all: control_stack/lib/shared/CMakeFiles/amrl_shared_lib.dir/all
 	$(MAKE) -f control_stack/CMakeFiles/nav_lib.dir/build.make control_stack/CMakeFiles/nav_lib.dir/depend
 	$(MAKE) -f control_stack/CMakeFiles/nav_lib.dir/build.make control_stack/CMakeFiles/nav_lib.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles --progress-num=23,24,25,26,27,28 "Built target nav_lib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles --progress-num=26,27,28,29,30,31 "Built target nav_lib"
 .PHONY : control_stack/CMakeFiles/nav_lib.dir/all
 
 # Include target in all.
@@ -2324,7 +2324,7 @@ control_stack/CMakeFiles/nav_node.dir/all: control_stack/CMakeFiles/nav_lib.dir/
 control_stack/CMakeFiles/nav_node.dir/all: control_stack/lib/shared/CMakeFiles/amrl_shared_lib.dir/all
 	$(MAKE) -f control_stack/CMakeFiles/nav_node.dir/build.make control_stack/CMakeFiles/nav_node.dir/depend
 	$(MAKE) -f control_stack/CMakeFiles/nav_node.dir/build.make control_stack/CMakeFiles/nav_node.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles --progress-num=29,30,31,32 "Built target nav_node"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles --progress-num=32,33,34,35 "Built target nav_node"
 .PHONY : control_stack/CMakeFiles/nav_node.dir/all
 
 # Include target in all.
@@ -2591,12 +2591,12 @@ restaurant_state/preinstall:
 # Directory level rules for directory task_allocator
 
 # Convenience name for "all" pass in the directory.
-task_allocator/all:
+task_allocator/all: task_allocator/CMakeFiles/job_assignment.dir/all
 
 .PHONY : task_allocator/all
 
 # Convenience name for "clean" pass in the directory.
-task_allocator/clean:
+task_allocator/clean: task_allocator/CMakeFiles/job_assignment.dir/clean
 
 .PHONY : task_allocator/clean
 
@@ -2604,6 +2604,43 @@ task_allocator/clean:
 task_allocator/preinstall:
 
 .PHONY : task_allocator/preinstall
+
+#=============================================================================
+# Target rules for target task_allocator/CMakeFiles/job_assignment.dir
+
+# All Build rule for target.
+task_allocator/CMakeFiles/job_assignment.dir/all:
+	$(MAKE) -f task_allocator/CMakeFiles/job_assignment.dir/build.make task_allocator/CMakeFiles/job_assignment.dir/depend
+	$(MAKE) -f task_allocator/CMakeFiles/job_assignment.dir/build.make task_allocator/CMakeFiles/job_assignment.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles --progress-num=23,24,25 "Built target job_assignment"
+.PHONY : task_allocator/CMakeFiles/job_assignment.dir/all
+
+# Include target in all.
+all: task_allocator/CMakeFiles/job_assignment.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+task_allocator/CMakeFiles/job_assignment.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles 3
+	$(MAKE) -f CMakeFiles/Makefile2 task_allocator/CMakeFiles/job_assignment.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/build/CMakeFiles 0
+.PHONY : task_allocator/CMakeFiles/job_assignment.dir/rule
+
+# Convenience name for target.
+job_assignment: task_allocator/CMakeFiles/job_assignment.dir/rule
+
+.PHONY : job_assignment
+
+# clean rule for target.
+task_allocator/CMakeFiles/job_assignment.dir/clean:
+	$(MAKE) -f task_allocator/CMakeFiles/job_assignment.dir/build.make task_allocator/CMakeFiles/job_assignment.dir/clean
+.PHONY : task_allocator/CMakeFiles/job_assignment.dir/clean
+
+# clean rule for target.
+clean: task_allocator/CMakeFiles/job_assignment.dir/clean
+
+.PHONY : clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

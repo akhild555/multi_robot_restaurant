@@ -65,8 +65,8 @@ Result Solve(const Matrix &input, MODE mode);
 
 void PrintMatrix(const Matrix &m);
 
-
+std::vector<int> ResConv(const Matrix &cost, const Matrix &result);
 
 };  // namespace Hungarian
 
-int runHungarian();
+std::vector<int> runHungarian();

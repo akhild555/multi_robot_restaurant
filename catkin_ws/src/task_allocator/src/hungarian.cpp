@@ -328,10 +328,14 @@ const Hungarian::Matrix SOLUTION1 = {
 
 // clang-format off
 const Hungarian::Matrix EXAMPLE2 = {
-  {100, 1},
+  {100, 200},
   {100, 12},
-  {1, 4},
-  {6, 30252}
+  {1, 400},
+  {600, 30252}
+  //   {100, 1, 10000, 10000},
+  // {100, 12, 10000, 10000},
+  // {1, 4, 10000, 10000},
+  // {6, 30252, 10000, 10000}
 };
 
 // TODO: this isn't right
@@ -342,6 +346,33 @@ const Hungarian::Matrix SOLUTION2 = {
   {0,0,0,1},
 };
 // clang-format on
+std::vector<int> ResConv(const Hungarian::Matrix &cost, const Hungarian::Matrix &result)
+{
+  Hungarian::PrintMatrix(cost);
+  Hungarian::PrintMatrix(result);
+  const int n_robo = cost.size(); //no of robots
+  const int n_job = cost[1].size(); //no of robots
+  std::vector<int> assgn (n_robo, 0);
+  for(int i =0; i<n_robo; i++)
+  {
+    for(int j = 0; j<n_job; j++)
+    {
+      //cout<<result[i][j]<<endl;
+      if(result[i][j]!=0)
+      {
+        assgn[i] = j+1;
+      }     
+    }
+  }
+  for(int i =0; i<n_robo; i++)
+  {
+      cout<<"assgn["<<i<<"]"<< assgn[i]<<endl;
+  }
+  // std::vector<int> assgn = {0,0,0,0};
+  return assgn;
+
+}
+
 
 bool runExample(const Hungarian::Matrix& cost,
                 const Hungarian::Matrix& solution) {
@@ -362,16 +393,24 @@ bool runExample(const Hungarian::Matrix& cost,
   cerr << "Solution correct? " << correct << endl;
 
   return correct;
+
+
 }
 
 // this function runs hungarian algo on example matrices
-int runHungarian() {
-  bool success = true;
+std::vector<int> runHungarian() {
+  // bool success = true;
 
-  if (!runExample(EXAMPLE1, SOLUTION1)) success = false;
-  cerr << "--------------------" << endl;
-  if (!runExample(EXAMPLE2, SOLUTION2)) success = false;
+  Hungarian::Result r = Hungarian::Solve(EXAMPLE2, Hungarian::MODE_MINIMIZE_COST);
 
-  return success ? 0 : 1;
+  // if (!runExample(EXAMPLE1, SOLUTION1)) success = false;
+  // cerr << "--------------------" << endl;
+  // if (!runExample(EXAMPLE2, SOLUTION2)) success = false;
+
+  // return success ? 0 : 1;
+
+  std::vector<int> finRes = ResConv(EXAMPLE2, r.assignment);
+
+  return finRes;
 }
 

@@ -1,2 +1,0 @@
-control_stack:restaurant_state:task_allocator
--DCATKIN_DEVEL_PREFIX=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/install -G Unix Makefiles

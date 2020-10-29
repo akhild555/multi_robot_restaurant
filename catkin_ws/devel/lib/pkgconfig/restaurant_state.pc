@@ -1,8 +1,0 @@
-prefix=/home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/devel
-
-Name: restaurant_state
-Description: Description of restaurant_state
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

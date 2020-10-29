@@ -67,6 +67,8 @@ class EscapeCollisionController : public Controller {
   std::pair<ControllerType, util::Twist> Execute() override;
 
   void Reset() override;
+
+  void UpdateGoal(std::vector<util::Pose>) override{};
 };
 
 }  // namespace controllers

@@ -34,6 +34,7 @@ class NavController : public Controller {
   path_finding::GlobalPathFinder<path_finding::AStar<3, 20000, false>>
       global_path_finder_;
   path_finding::AStar<5, 500, false> local_path_finder_;
+  std::vector<util::Pose> goal_list_;
   util::Pose current_goal_;
   size_t current_goal_index_;
 
@@ -52,6 +53,9 @@ class NavController : public Controller {
   std::pair<ControllerType, util::Twist> Execute() override;
 
   void Reset() override;
+
+  void UpdateGoal(std::vector<util::Pose> new_goal_list) override;
+
 };
 
 }  // namespace controllers

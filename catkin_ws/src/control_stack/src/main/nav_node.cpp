@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
   ros::NodeHandle n;
 
   cs::main::DebugPubWrapper dpw(&n, pub_sub_prefix);
-  cs::main::StateMachine state_machine(&dpw, &n, pub_sub_prefix);
+  cs::main::StateMachine state_machine(&dpw, &n, pub_sub_prefix, robot_index);
 
   ros::Subscriber laser_sub =
       n.subscribe(pub_sub_prefix + constants::kLaserTopic,
@@ -65,6 +65,11 @@ int main(int argc, char** argv) {
                                          1,
                                          &cs::main::StateMachine::UpdateOdom,
                                          &state_machine);
+  ros::Subscriber goal_sub = n.subscribe("/robot_goal", 
+                                        1,
+                                        &cs::main::StateMachine::UpdateGoal,
+                                        &state_machine);
+                                        
   ros::Publisher command_pub = n.advertise<geometry_msgs::Twist>(
       pub_sub_prefix + constants::kCommandVelocityTopic, 1);
 

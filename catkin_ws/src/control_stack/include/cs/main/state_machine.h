@@ -55,6 +55,10 @@
 #include "shared/math/math_util.h"
 #include "shared/util/timer.h"
 
+#include <control_stack/RobotPosition.h>
+#include <control_stack/RobotGoal.h>
+#include <geometry_msgs/Twist.h>
+
 namespace cs {
 namespace main {
 
@@ -116,6 +120,14 @@ struct ControllerList {
     return controller_array[current_controller_]->Reset();
   }
 
+  void UpdateGoal(std::vector<util::Pose> goal_list) {
+    if (current_controller_ != cs::controllers::ControllerType::NAVIGATION) {
+      return;
+    }
+    ///TODO
+    controller_array[current_controller_]->UpdateGoal(goal_list);
+  }
+
   util::Twist Execute() {
     static constexpr bool kDebug = false;
     for (int num_transitions = 0; num_transitions < 8; ++num_transitions) {
@@ -125,7 +137,7 @@ struct ControllerList {
                  cs::controllers::to_string(current_controller_).c_str());
       }
       const auto execute_result =
-          controller_array[current_controller_]->Execute();
+          controller_array[current_controller_]->Execute();  //SKIP EXECUTION IF NO GOAL
       if (execute_result.first == current_controller_) {
         return execute_result.second;
       }
@@ -152,7 +164,7 @@ class StateMachine {
   tf::TransformBroadcaster br_;
   ControllerList controller_list_;
   std::string pub_sub_prefix_;
-
+  int robot_index_;
   // ===========================================================================
 
   cs::state_estimation::StateEstimator* MakeStateEstimator(ros::NodeHandle* n) {
@@ -267,7 +279,8 @@ class StateMachine {
   StateMachine() = delete;
   StateMachine(cs::main::DebugPubWrapper* dpw,
                ros::NodeHandle* n,
-               const std::string& pub_sub_prefix)
+               const std::string& pub_sub_prefix,
+               int robot_index)
       : dpw_(dpw),
         map_(params::CONFIG_map),
         state_estimator_(MakeStateEstimator(n)),
@@ -281,7 +294,8 @@ class StateMachine {
                          obstacle_detector_,
                          motion_planner_,
                          cs::controllers::ControllerType::NAVIGATION),
-        pub_sub_prefix_(pub_sub_prefix) {}
+        pub_sub_prefix_(pub_sub_prefix),
+        robot_index_(robot_index) {}
 
   Eigen::Affine2f GetLaserOffset() {
     Eigen::Affine2f a = Eigen::Affine2f::Identity();
@@ -312,12 +326,32 @@ class StateMachine {
     state_estimator_->UpdateOdom(odom_, odom_update_time_);
   }
 
+  void UpdateGoal(const control_stack::RobotGoal& msg) {
+    if (msg.robot_index != robot_index_) {
+      return;
+    }
+    std::vector<util::Pose> goal_list;
+    for (geometry_msgs::Twist goal: msg.robot_goal) {
+      goal_list.push_back(util::Pose(goal));
+    }
+    // update goal
+    controller_list_.UpdateGoal(goal_list);
+
+  }
+
   util::Twist ExecuteController() {
     const auto est_pose = state_estimator_->GetEstimatedPose();
     dpw_->position_pub_.publish(est_pose.ToTwist());
+
+    control_stack::RobotPosition msg;
+    msg.stamp = ros::Time::now();
+    msg.robot_index = robot_index_;
+    msg.robot_position = est_pose.ToTwist();
+    dpw_ ->position_with_index_pub_.publish(msg);
+
     obstacle_detector_.UpdateObservation(
         est_pose, laser_, &(dpw_->detected_walls_pub_));
-    const util::Twist command = controller_list_.Execute();
+    const util::Twist command = controller_list_.Execute();     // CONTROLLER EXEC 
     state_estimator_->UpdateLastCommand(command);
     PublishTransforms();
     state_estimator_->Visualize(&(dpw_->particle_pub_));

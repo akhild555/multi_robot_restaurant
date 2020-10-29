@@ -31,7 +31,8 @@ state_estimation = {
 };
 
 function get_goals()
-  return {{35, -40, 0}, {-51, 3, -3.14}, {17, -14, -3.14}}
+  -- return {{35, -40, 0}, {-51, 3, -3.14}, {17, -14, -3.14}}
+  return{{1,14,0}, {5,14}}
 end
 
 pf = {
@@ -44,7 +45,7 @@ pf = {
   map = "src/control_stack/maps/outside_grasp.map";
   map = "src/control_stack/maps/fourthfloorloop.map";
   goal_poses = get_goals();
-  start_pose = get_goals()[3];
+  start_pose = get_goals()[2];
 
   kRobotRadius = 0.1;
   kSafetyMargin = 0.16;

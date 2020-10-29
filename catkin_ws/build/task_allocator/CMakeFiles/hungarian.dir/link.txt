@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/hungarian.dir/src/hungarian.cpp.o  -o /home/akhil/mr_rest/multi_robot_restaurant/catkin_ws/devel/lib/task_allocator/hungarian 

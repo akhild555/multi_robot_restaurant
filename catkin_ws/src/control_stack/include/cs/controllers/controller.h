@@ -78,6 +78,8 @@ class Controller {
   virtual std::pair<ControllerType, util::Twist> Execute() = 0;
 
   virtual void Reset() = 0;
+
+  virtual void UpdateGoal(std::vector<util::Pose>) = 0;
 };
 
 }  // namespace controllers

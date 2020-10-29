@@ -56,11 +56,14 @@
 #include "shared/math/math_util.h"
 #include "shared/util/timer.h"
 
+#include <control_stack/RobotPosition.h>
+
 namespace cs {
 namespace main {
 
 struct DebugPubWrapper {
   ros::Publisher position_pub_;
+  ros::Publisher position_with_index_pub_;
   ros::Publisher modified_laser_pub_;
   ros::Publisher particle_pub_;
   ros::Publisher map_pub_;
@@ -80,6 +83,10 @@ struct DebugPubWrapper {
                            const std::string& pub_sub_prefix) {
     position_pub_ = n->advertise<geometry_msgs::Twist>(
         pub_sub_prefix + constants::kPositionTopic, 1);
+    
+    position_with_index_pub_ = n->advertise<control_stack::RobotPosition>(
+        constants::kPositionwithIndexTopic, 1);
+
     modified_laser_pub_ = n->advertise<sensor_msgs::LaserScan>(
         pub_sub_prefix + "/scan_modified", 10);
     particle_pub_ = n->advertise<visualization_msgs::MarkerArray>(

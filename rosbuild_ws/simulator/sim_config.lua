@@ -32,14 +32,14 @@ max_speed = 1.2
 max_accel = 3.0
 
 -- Laser noise simulation.
-laser_noise_stddev = 0.01
+-- laser_noise_stddev = 0.01
 
 -- Turning error simulation.
 angular_error_bias = DegToRad(0);
 angular_error_rate = 0.1;
 
 -- Laser rangefinder parameters.
-laser_noise_stddev = 0.01;
+laser_noise_stddev = 0.001;
 laser_angle_min = DegToRad(-135.0);
 laser_angle_max = DegToRad(135.0);
 laser_angle_increment = DegToRad(1);

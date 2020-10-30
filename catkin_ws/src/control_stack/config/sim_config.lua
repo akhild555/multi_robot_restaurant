@@ -36,11 +36,15 @@ pf = {
   kRotateStdDev = 0.1;
   kTemporalConsistencyWeight = 0;
 
-  map = "../rosbuild_ws/simulator/ut_multirobot_sim/maps/GDC3/GDC3.vectormap.txt";
-  start_pose = {33, 22.5, 0};
+  -- map = "../rosbuild_ws/simulator/ut_multirobot_sim/maps/GDC3/GDC3.vectormap.txt";
+  -- start_pose = {33, 22.5, 0};  
   -- goal_poses = {{33, 16, 0}, {-25, -17, 0}, {-10, -17, 0}, {5, -17, 0}};
-  goal_poses = {{14, 14, 0}};
+  -- goal_poses = {{14, 14, 0}};
 
+  map = "../catkin_ws/src/control_stack/maps/simple_restaurant.map";
+  start_pose = {0.38, 0.38, 0};
+  goal_poses = {{0.38, 0.38, 0}};
+  
 --   map = "src/control_stack/maps/outside_grasp.map";
 --   start_pose = {-2.5, -1, 0};
 --   goal_poses = {{0.27, -0.33, 0}, {1, -15, -3.14}, {-3.5, -7.5, 0}};

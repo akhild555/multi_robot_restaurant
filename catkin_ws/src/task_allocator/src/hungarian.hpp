@@ -28,7 +28,7 @@
  ********************************************************************/
 
 #pragma once
-
+#include "cost_function.h"
 #include <vector>
 
 namespace Hungarian {
@@ -69,4 +69,6 @@ std::vector<int> ResConv(const Matrix &cost, const Matrix &result);
 
 };  // namespace Hungarian
 
-std::vector<int> runHungarian();
+Hungarian::Result runHungarian(const Hungarian::Matrix &input, Hungarian::MODE mode);
+
+std::vector<int> assignment_msg(Hungarian::Result result, CostCalculation cost_func);

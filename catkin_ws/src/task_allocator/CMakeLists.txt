@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  control_stack
 )
 
 ## System dependencies are found with CMake's conventions
@@ -137,7 +138,7 @@ include_directories(
 
 
 # add executable and target_link_libraries for min_cost_assignment 
-add_executable(job_assignment src/job_assignment.cpp src/hungarian.cpp)
+add_executable(job_assignment src/job_assignment.cpp src/hungarian.cpp src/cost_function.cpp src/assignment_msg.cpp)
 
 
 

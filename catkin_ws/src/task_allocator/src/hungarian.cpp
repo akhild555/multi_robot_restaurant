@@ -33,6 +33,7 @@
 #include <iostream>
 #include <limits>
 
+
 using namespace std;
 
 namespace Hungarian {
@@ -397,11 +398,19 @@ bool runExample(const Hungarian::Matrix& cost,
 
 }
 
-// this function runs hungarian algo on example matrices
-std::vector<int> runHungarian() {
-  // bool success = true;
+void assignment_msg(const Hungarian::Matrix &input)
+{
 
-  Hungarian::Result r = Hungarian::Solve(EXAMPLE2, Hungarian::MODE_MINIMIZE_COST);
+}
+// this function runs hungarian algo on example matrices
+Hungarian::Result runHungarian(const Hungarian::Matrix &input, Hungarian::MODE mode) {
+  // bool success = true;
+  
+
+
+  Hungarian::Result r = Hungarian::Solve(input, mode);
+  return r;
+
 
   // if (!runExample(EXAMPLE1, SOLUTION1)) success = false;
   // cerr << "--------------------" << endl;
@@ -409,8 +418,8 @@ std::vector<int> runHungarian() {
 
   // return success ? 0 : 1;
 
-  std::vector<int> finRes = ResConv(EXAMPLE2, r.assignment);
+  // std::vector<int> finRes = ResConv(EXAMPLE2, r.assignment);
 
-  return finRes;
+  
 }
 

@@ -7,8 +7,8 @@
 -- start_poses = {{33, 22.5, 0}, {33, 22.5, 0}, {33, 22.5, 0}, {33, 22.5, 0}, {33, 22.5, 0}}
 
 map_name = "catkin_ws/src/control_stack/maps/simple_restaurant.map";
-start_poses = {{0.38, 0.38, 0},{0.38, 0.38, 0},{0.38, 0.38, 0},{0.38, 0.38, 0},{0.38, 0.38, 0}};
-
+-- start_poses = {{0.38, 0, 0},{4, 0, 0},{8.62, 0, 0},{0.38, 0.38, 0},{0.38, 0.38, 0}};
+start_poses = {{0.38, 0, 0},{4, 0, 0},{8.62, 0, 0},{0.38, 0.38, 0},{0.38, 0.38, 0}};
 -- map_name = "catkin_ws/src/control_stack/maps/loop.map";
 -- start_x = -4
 -- start_y = -4

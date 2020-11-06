@@ -69,6 +69,8 @@ class EscapeCollisionController : public Controller {
   void Reset() override;
 
   void UpdateGoal(std::vector<util::Pose>) override{};
+
+  bool isRobotActive() override {return true;};
 };
 
 }  // namespace controllers

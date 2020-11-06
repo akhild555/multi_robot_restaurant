@@ -37,7 +37,7 @@ class NavController : public Controller {
   std::vector<util::Pose> goal_list_;
   util::Pose current_goal_;
   size_t current_goal_index_;
-
+  bool robot_active_;
   void RefreshGoal();
 
  public:
@@ -55,6 +55,8 @@ class NavController : public Controller {
   void Reset() override;
 
   void UpdateGoal(std::vector<util::Pose> new_goal_list) override;
+
+  bool isRobotActive() override;
 
 };
 

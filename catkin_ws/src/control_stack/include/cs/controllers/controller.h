@@ -80,6 +80,8 @@ class Controller {
   virtual void Reset() = 0;
 
   virtual void UpdateGoal(std::vector<util::Pose>) = 0;
+
+  virtual bool isRobotActive() = 0;
 };
 
 }  // namespace controllers

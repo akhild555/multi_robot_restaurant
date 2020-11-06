@@ -124,8 +124,11 @@ struct ControllerList {
     if (current_controller_ != cs::controllers::ControllerType::NAVIGATION) {
       return;
     }
-    ///TODO
     controller_array[current_controller_]->UpdateGoal(goal_list);
+  }
+
+  bool isRobotActive() {
+    return controller_array[current_controller_]->isRobotActive();
   }
 
   util::Twist Execute() {
@@ -347,6 +350,7 @@ class StateMachine {
     msg.stamp = ros::Time::now();
     msg.robot_index = robot_index_;
     msg.robot_position = est_pose.ToTwist();
+    msg.robot_active =  controller_list_.isRobotActive();
     dpw_ ->position_with_index_pub_.publish(msg);
 
     obstacle_detector_.UpdateObservation(

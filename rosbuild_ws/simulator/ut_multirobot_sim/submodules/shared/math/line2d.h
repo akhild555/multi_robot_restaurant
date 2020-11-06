@@ -69,19 +69,7 @@ struct Line {
   }
 
   T ClosestApproach(const Vector2T& p2, const Vector2T& p3) const {
-    const Vector2T d = Dir();
-    const T l = Length();
-    const Vector2T p20 = p2 - p0;
-    const Vector2T p30 = p3 - p0;
-    const T p2d = d.dot(p20);
-    const T p3d = d.dot(p30);
-    if (p2d <= T(0) && p3d <= T(0)) {
-      return std::min<T>(p20.norm(), p30.norm());
-    } else if (p2d >= l && p3d >= l) {
-      return std::min<T>((p2 - p1).norm(), (p3 - p1).norm());
-    }
-    const Vector2T n = UnitNormal();
-    return std::min<T>(std::abs<T>(n.dot(p20)), std::abs<T>(n.dot(p30)));
+    return geometry::MinDistanceLineLine(p0, p1, p2, p3);
   }
 
   T ClosestApproach(const Line<T>& l) const {

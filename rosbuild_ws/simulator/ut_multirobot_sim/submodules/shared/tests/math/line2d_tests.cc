@@ -92,6 +92,15 @@ TEST(Line2D, ClosestApproach) {
 
   EXPECT_FLOAT_EQ(Line2f(1, 1, 10, 1).ClosestApproach(
       Vector2f(-100, 0), Vector2f(-1, -1)), sqrt(8.0f));
+
+  EXPECT_FLOAT_EQ(Line2f(-2, 2, 2, 2).ClosestApproach(
+    {-2.5, 0}, {-1.5, 4}), 0);
+
+  EXPECT_FLOAT_EQ(Line2f(-2, 2, 2, 2).ClosestApproach(
+    {-2.5, 0}, {-1.5, 0}), 2);
+
+  EXPECT_FLOAT_EQ(Line2f(1.0f, 1.0f, 20.0f, 1.0f).ClosestApproach(
+    Vector2f(0.9, 1), Vector2f(4.9, 5)), 0.1f / sqrt(2.0f));
 }
 
 TEST(Line2D, Distance) {
@@ -106,4 +115,9 @@ TEST(Line2D, Distance) {
 
   EXPECT_FLOAT_EQ(Line2f(1, 1, 10, 1).Distance(
       Vector2f(6, 2)), 1.0);
+}
+
+TEST(Line2D, CloserThan) {
+  EXPECT_TRUE(Line2f(-2, 2, 2, 2).CloserThan(
+    {-2.61382, 0.744}, {-1.5, 4}, 0.3));
 }

@@ -2,6 +2,9 @@
 // College of Information and Computer Sciences,
 // University of Massachusetts Amherst
 //
+// Copyright 2020 kvedder@seas.upenn.edu
+// School of Engineering and Applied Sciences,
+// University of Pennsylvania
 //
 // This software is free: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License Version 3,
@@ -27,13 +30,39 @@
 
 namespace array_util {
 
-const bool kProduction = false;
-
 template <size_t N, class T>
 std::array<T, N> MakeArray(const T& v) {
   std::array<T, N> ret;
   ret.fill(v);
   return ret;
+}
+
+template <size_t N, class T>
+size_t ArgMin(const std::array<T, N>& v) {
+  if (N <= 0) {
+    return 0;
+  }
+  size_t idx = 0;
+  for (size_t i = 1; i < v.size(); ++i) {
+    if (v[idx] > v[i]) {
+      idx = i;
+    }
+  }
+  return idx;
+}
+
+template <size_t N, class T>
+size_t ArgMax(const std::array<T, N>& v) {
+  if (N <= 0) {
+    return 0;
+  }
+  size_t idx = 0;
+  for (size_t i = 1; i < v.size(); ++i) {
+    if (v[idx] < v[i]) {
+      idx = i;
+    }
+  }
+  return idx;
 }
 
 template <size_t N, class T>
@@ -152,11 +181,6 @@ std::array<T, N> GetIndexedElements(const std::array<std::vector<T>, N>& a,
     if (needs_replans[i]) {
       const auto& v = a[i];
       const size_t& index = indices[i];
-      if (!kProduction) {
-        if (index >= v.size()) {
-          LOG(FATAL) << "Index " << index << " out of range " << v.size();
-        }
-      }
       ret[i] = v[index];
     }
   }

@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include "glog/logging.h"
 
 #ifndef SRC_MATH_MATH_UTIL_H_
 #define SRC_MATH_MATH_UTIL_H_
@@ -58,14 +59,34 @@ T AngleMod(T angle) {
 }
 
 template <typename T>
-T AngleDiff(T a0, T a1) {
-  return AngleMod<T>(a0 - a1);
+T AngleDiff(const T& a0, const T& a1) {
+  const T s = std::sin(a0 - a1);
+  const T c = std::cos(a0 - a1);
+  return std::atan2(s, c);
 }
 
-template <typename T>
-T AngleDist(T a0, T a1) {
-  return std::fabs<T>(AngleMod<T>(a0 - a1));
+template <>
+inline float AngleDiff<float>(const float& a0, const float& a1) {
+  static constexpr float kPiF = static_cast<float>(M_2PI);
+  float angle = a0 - a1;
+  angle -= kPiF * rintf(angle / kPiF);
+  return angle;
 }
+
+template <>
+inline double AngleDiff<double>(const double& a0, const double& a1) {
+  static constexpr double kPiF = static_cast<double>(M_2PI);
+  double angle = a0 - a1;
+  angle -= kPiF * rint(angle / kPiF);
+  return angle;
+}
+
+
+template <typename T>
+T AngleDist(const T& a0, const T& a1) {
+  return std::abs<T>(AngleDiff(a0, a1));
+}
+
 
 // Check if angle is between min and max angle, moving in a counterclockwise
 // direction from min_angle to max_angle.
@@ -145,8 +166,6 @@ T Ramp(const T x, const T x_min, const T x_max, const T y_min, const T y_max) {
 // value is the number of unique real roots found.
 template <typename T>
 unsigned int SolveQuadratic(const T& a, const T& b, const T& c, T* r0, T* r1) {
-  DCHECK_NE(r0, static_cast<T*>(nullptr));
-  DCHECK_NE(r1, static_cast<T*>(nullptr));
   const T discriminant = Sq(b) - T(4.0) * a * c;
   if (discriminant < T(0)) {
     return 0;

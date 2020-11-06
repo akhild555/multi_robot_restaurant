@@ -63,7 +63,7 @@ int CreateOrEraseFileForWrite(const std::string& file_name) {
   // Initialize the static folder path buffer, if not already initialized.
   if (strlen(kRandomDirectory) == 0) {
     strncpy(kRandomDirectory, PrepareDirectory(kNumRandomChars).c_str(),
-            kNumTotalChars);
+            kNumTotalChars - 1);
   }
   mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
   int file_descriptor = open((kRandomDirectory + file_name).c_str(),
@@ -78,7 +78,7 @@ int OpenFileForRead(const std::string& file_name) {
   // Initialize the static folder path buffer, if not already initialized.
   if (strlen(kRandomDirectory) == 0) {
     strncpy(kRandomDirectory, PrepareDirectory(kNumRandomChars).c_str(),
-            kNumTotalChars);
+            kNumTotalChars - 1);
   }
   return OpenGeneralFileForRead(kRandomDirectory + file_name);
 }
@@ -94,7 +94,7 @@ int OpenGeneralFileForRead(const std::string& file_name) {
 std::string GetFolderName() {
   if (strlen(kRandomDirectory) == 0) {
     strncpy(kRandomDirectory, PrepareDirectory(kNumRandomChars).c_str(),
-            kNumTotalChars);
+            kNumTotalChars - 1);
   }
   return std::string(kRandomDirectory);
 }
@@ -102,7 +102,7 @@ std::string GetFolderName() {
 std::string GetFullFolderPath() {
   if (strlen(kRandomDirectory) == 0) {
     strncpy(kRandomDirectory, PrepareDirectory(kNumRandomChars).c_str(),
-            kNumTotalChars);
+            kNumTotalChars - 1);
   }
 
   char cwd[1024] = {0};

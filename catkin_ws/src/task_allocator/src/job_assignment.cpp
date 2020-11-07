@@ -25,7 +25,13 @@ int main(int argc, char **argv)
 
   // set # tasks
   cost_func.getTasks();
-  
+
+ // Use: Subscribe to Kitchen State Topic
+  // ros::Subscriber kitchen_state_sub =
+  //     n.subscribe("/kitchen_state", 1, cost_func.getRobots);
+  // Subscribe to Robot State Topic
+  // ros::Subscriber robot_state_sub =
+  //     n.subscribe("/robot_state", 1, cost_func.getTasks);
 
   // get robot and task info
   int num_tasks = cost_func.num_tasks;
@@ -50,12 +56,13 @@ int main(int argc, char **argv)
   //       std::cout<<"assgn["<<i<<"]"<< assignments[i]<<std::endl;
   //   }
 
+
   // Subscribe to Kitchen State Topic
   // ros::Subscriber kitchen_state_sub =
-  //     n.subscribe("/kitchen state", 1, &CostCalculation::getTasks, &cost_func);
+  //     n.subscribe("/kitchen_state", 1, &CostCalculation::getTasks, &cost_func);
   // Subscribe to Robot State Topic
   // ros::Subscriber robot_state_sub =
-  //     n.subscribe("/robot state", 1, &CostCalculation::getRobots, &cost_func);
+  //     n.subscribe("/robot_state", 1, &CostCalculation::getRobots, &cost_func);
   // // Publish Cost Matrix 
   // ros::Publisher cost_matrix_pub =
   //     n.advertise<std_msgs::Float32MultiArray>("/cost_matrix", 1);

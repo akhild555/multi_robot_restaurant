@@ -6,9 +6,9 @@
 -- map_name =  "rosbuild_ws/simulator/ut_multirobot_sim/maps/GDC3/GDC3.vectormap.txt";
 -- start_poses = {{33, 22.5, 0}, {33, 22.5, 0}, {33, 22.5, 0}, {33, 22.5, 0}, {33, 22.5, 0}}
 
-map_name = "catkin_ws/src/control_stack/maps/simple_restaurant.map";
+map_name = "catkin_ws/src/control_stack/maps/monarch.map";
 -- start_poses = {{0.38, 0, 0},{4, 0, 0},{8.62, 0, 0},{0.38, 0.38, 0},{0.38, 0.38, 0}};
-start_poses = {{0.38, 0, 0},{4, 0, 0},{8.62, 0, 0},{0.38, 0.38, 0},{0.38, 0.38, 0}};
+start_poses = {{10, 1, 0},{11.5, 1, 0},{13, 1, 0},{0.38, 0.38, 0},{0.38, 0.38, 0}};
 -- map_name = "catkin_ws/src/control_stack/maps/loop.map";
 -- start_x = -4
 -- start_y = -4

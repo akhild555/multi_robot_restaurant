@@ -1,5 +1,5 @@
 #include "cost_function.h"
-
+#include "json.h"
 // #include <control_stack/RobotDatabase.h>
 // #include <control_stack/RobotGoal.h>
 // #include <control_stack/RobotPosition.h>
@@ -8,13 +8,18 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
+
+
+using json = nlohmann::json;
 
 // Add msg as input
 void CostCalculation::getRobots() {
   robots = {0, 1, 2};
   num_robots = robots.size();
   // robot_loc = {{0.38, 0}, {4, 0}, {8.62, 0}};
-  robot_loc = {{0.98, 8.96, 0},{1.98, 8.96, 0},{2.98, 8.96, 0}};
+  // robot_loc = {{0.98, 8.96},{1.98, 8.96},{2.98, 8.96}};
+   robot_loc = {{0.38, 0, 0},{4, 0, 0},{8.62, 0, 0}};
   // Add code to read data from msg
 }
 
@@ -22,10 +27,23 @@ void CostCalculation::getRobots() {
 void CostCalculation::getTasks() {
   num_tasks = 3;
   //   start_task_loc = {{4.5, 10.5}, {4.5, 10.5}, {4.5, 10.5}};
-  // start_task_loc = {{3, 10}, {4.5, 10}, {6.0, 10}};
-  start_task_loc = {{33.01, 9.46}, {33.01, 9.46}, {33.01, 9.46}};
-  //   end_task_loc = {{0.76, 8.24}, {3.74, 8.24}, {6.72, 8.24}};
-  end_task_loc = {{19.41, 4.14}, {22.37, 4.59}, {25.84, 4.59}};
+  std::ifstream file_input("src/control_stack/config/monarch_config.json");
+  json output;
+  file_input >> output;
+
+  float start_x1 =  output["Kitchen"]["x"];
+  float start_y1 =  output["Kitchen"]["y"];
+
+  start_task_loc = {{start_x1, start_y1}, {start_x1, start_y1}, {start_x1, start_y1}};
+  
+  float end_x1 =  output["Table_0"]["dropoff"]["x"];
+  float end_y1 =  output["Table_0"]["dropoff"]["y"];
+  float end_x2 =  output["Table_1"]["dropoff"]["x"];
+  float end_y2 =  output["Table_1"]["dropoff"]["y"];
+  float end_x3 =  output["Table_2"]["dropoff"]["x"];
+  float end_y3 =  output["Table_2"]["dropoff"]["y"];
+
+  end_task_loc = {{end_x1, end_y1}, {end_x2, end_y2}, {end_x3, end_y3}};
   // Add code to read data from msg
 }
 

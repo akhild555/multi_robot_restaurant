@@ -117,7 +117,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -138,7 +138,7 @@ include_directories(
 
 
 # add executable and target_link_libraries for min_cost_assignment 
-add_executable(job_assignment src/job_assignment.cpp src/hungarian.cpp src/cost_function.cpp src/assignment_msg.cpp)
+add_executable(job_assignment src/job_assignment.cpp src/hungarian.cpp src/cost_function.cpp src/assignment_msg.cpp include/hungarian.hpp include/cost_function.h)
 
 
 

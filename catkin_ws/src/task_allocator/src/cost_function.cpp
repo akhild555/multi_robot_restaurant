@@ -36,12 +36,12 @@ void CostCalculation::getTasks() {
 
   start_task_loc = {{start_x1, start_y1}, {start_x1, start_y1}, {start_x1, start_y1}};
   
-  float end_x1 =  output["Table_0"]["dropoff"]["x"];
-  float end_y1 =  output["Table_0"]["dropoff"]["y"];
-  float end_x2 =  output["Table_1"]["dropoff"]["x"];
-  float end_y2 =  output["Table_1"]["dropoff"]["y"];
-  float end_x3 =  output["Table_2"]["dropoff"]["x"];
-  float end_y3 =  output["Table_2"]["dropoff"]["y"];
+  float end_x1 =  output["Table_1"]["dropoff"]["x"];
+  float end_y1 =  output["Table_1"]["dropoff"]["y"];
+  float end_x2 =  output["Table_2"]["dropoff"]["x"];
+  float end_y2 =  output["Table_2"]["dropoff"]["y"];
+  float end_x3 =  output["Table_3"]["dropoff"]["x"];
+  float end_y3 =  output["Table_3"]["dropoff"]["y"];
 
   end_task_loc = {{end_x1, end_y1}, {end_x2, end_y2}, {end_x3, end_y3}};
   // Add code to read data from msg

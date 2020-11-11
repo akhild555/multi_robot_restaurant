@@ -4,17 +4,22 @@
 #include "cost_function.h"
 #include "std_msgs/Int32MultiArray.h"
 #include <control_stack/RobotGoal.h>
+#include <control_stack/KitchenOrders.h>
 #include <vector>
 #include <sstream>
 #include <string>
 
-
+void test_callback(const control_stack::KitchenOrders& msg)
+{
+  std::cout << msg.table_number << std::endl;
+}
 
 int main(int argc, char **argv)
 {
 
   ros::init(argc, argv, "job_assignment");
   ros::NodeHandle n;
+  ros::Subscriber kitchen_test = n.subscribe("/kitchen_state", 1000, test_callback);
   ros::Publisher job_assignment = n.advertise<control_stack::RobotGoal>("/robot_goal", 1000);
   
   // Instantiate CostCalculation object
@@ -49,7 +54,7 @@ int main(int argc, char **argv)
 
   
   int count = 0;
-  while (count<2)
+  while (ros::ok())
   {
     
     control_stack::RobotGoal robot_assgn;
@@ -77,5 +82,5 @@ int main(int argc, char **argv)
     loop_rate.sleep();
     ++count;
   }
- 
+  return 0;
 }

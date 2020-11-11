@@ -13,15 +13,16 @@ int main(int argc, char **argv)
   int number_of_tables = 17;
   int counter = 0;
 
+  KitchenManager kitchen_manager(nh);
+  RobotDataManager data_manager(nh, number_of_robots);
+  
   while (ros::ok())
-  {
-    
-    KitchenManager kitchen_manager(nh, number_of_tables, counter);
-    RobotDataManager data_manager(nh, number_of_robots);
+  {    
+    kitchen_manager.randOrderGenerator(number_of_tables, counter); // randomly generate order
     ros::spinOnce();
     loop_rate.sleep();
     counter++;
   }
-return 0;
+  return 0;
   
 }

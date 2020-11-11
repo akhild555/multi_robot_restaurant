@@ -12,7 +12,18 @@ class KitchenManager {
 
 public:
 
-  void generateOrders(int number_of_tables, int counter)
+  void randOrderGenerator(int number_of_tables, int counter)
+  {
+    // generate random number to determine whether to generate new order
+    std::random_device pub_freq; // obtain a random number from hardware
+    std::mt19937 gen(pub_freq()); // seed the generator
+    std::uniform_int_distribution<> distr(1, 100); // define the range
+    if (distr(gen) % 10 == 0)
+    {
+        createOrder(number_of_tables, counter);
+    }
+  }
+  void createOrder(int number_of_tables, int counter)
   {
     // generate random table
     std::random_device rd; // obtain a random number from hardware
@@ -28,6 +39,7 @@ public:
   
   void publishKitchenOrders() {
     order_publisher.publish(order);
+    ROS_INFO("published order");
   }
 
 
@@ -35,17 +47,9 @@ public:
   /**
    * Constructor
    */ 
-  KitchenManager(ros::NodeHandle& nh, int number_of_tables, int counter) {
+  KitchenManager(ros::NodeHandle& nh) {
 
-    order_publisher = nh.advertise<control_stack::KitchenOrders>("/pubTestMsg", 1000);
-    
-    // generate random number to determine when to publish new order
-    std::random_device pub_freq; // obtain a random number from hardware
-    std::mt19937 gen(pub_freq()); // seed the generator
-    std::uniform_int_distribution<> distr(1, 100); // define the range
-    if (distr(gen) % 10 == 0)
-    {
-        generateOrders(number_of_tables, counter);
-    }
+    order_publisher = nh.advertise<control_stack::KitchenOrders>("/kitchen_state", 100);
+    ROS_INFO("Kitchen manager ready");
   }
 };

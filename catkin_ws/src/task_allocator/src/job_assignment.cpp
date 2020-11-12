@@ -4,17 +4,22 @@
 #include "cost_function.h"
 #include "std_msgs/Int32MultiArray.h"
 #include <control_stack/RobotGoal.h>
+#include <control_stack/KitchenOrders.h>
 #include <vector>
 #include <sstream>
 #include <string>
 
-
+void test_callback(const control_stack::KitchenOrders& msg)
+{
+  std::cout << msg.table_number << std::endl;
+}
 
 int main(int argc, char **argv)
 {
 
   ros::init(argc, argv, "job_assignment");
   ros::NodeHandle n;
+  ros::Subscriber kitchen_test = n.subscribe("/kitchen_state", 1000, test_callback);
   ros::Publisher job_assignment = n.advertise<control_stack::RobotGoal>("/robot_goal", 1000);
   
   // Instantiate CostCalculation object
@@ -25,7 +30,6 @@ int main(int argc, char **argv)
 
   // set # tasks
   cost_func.getTasks();
-  
 
   // get robot and task info
   int num_tasks = cost_func.num_tasks;
@@ -45,39 +49,16 @@ int main(int argc, char **argv)
   // get job assignment vector
   std::vector<int> assignments = assignment_msg(r, cost_func);
 
-  // for(int i =0; i<3; i++)
-  //   {
-  //       std::cout<<"assgn["<<i<<"]"<< assignments[i]<<std::endl;
-  //   }
 
-  // Subscribe to Kitchen State Topic
-  // ros::Subscriber kitchen_state_sub =
-  //     n.subscribe("/kitchen state", 1, &CostCalculation::getTasks, &cost_func);
-  // Subscribe to Robot State Topic
-  // ros::Subscriber robot_state_sub =
-  //     n.subscribe("/robot state", 1, &CostCalculation::getRobots, &cost_func);
-  // // Publish Cost Matrix 
-  // ros::Publisher cost_matrix_pub =
-  //     n.advertise<std_msgs::Float32MultiArray>("/cost_matrix", 1);
-
-  
-  
   ros::Rate loop_rate(1);
 
   
   int count = 0;
-  while (count<2)
+  while (ros::ok())
   {
     
     control_stack::RobotGoal robot_assgn;
     geometry_msgs:: Twist t;
-		//Clear array
-		// robot_assgn.data.clear();
-		//for loop, pushing data in the size of the array
-		// for (int i = 0; i < num_robots; i++)
-		// {
-		// 	assgn_array.data.push_back(assignments[i]);
-		// }
 
     for (int i = 0; i < assignments.size(); i++)
     {
@@ -101,6 +82,5 @@ int main(int argc, char **argv)
     loop_rate.sleep();
     ++count;
   }
-
-  
+  return 0;
 }

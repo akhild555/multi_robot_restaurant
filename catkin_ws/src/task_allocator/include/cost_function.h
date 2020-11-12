@@ -5,8 +5,11 @@
 #include <string>
 #include <vector>
 
-class CostCalculation {
+// #include <control_stack/RobotDatabase.h>
+// #include <control_stack/RobotGoal.h>
+// #include <control_stack/RobotPosition.h>
 
+class CostCalculation {
 
 public:
   std::vector<int> robots;
@@ -20,6 +23,10 @@ public:
   std::vector<std::vector<int>> cost_matrix;
   // Functions
   CostCalculation(){};
+
+  // void getRobots(const control_stack::RobotDatabase& robot_msg);
+  // void getTasks(const control_stack::KtichenState& kitchen_msg);
+
   void getRobots();
   void getTasks();
   void cost_function(int num_tasks,

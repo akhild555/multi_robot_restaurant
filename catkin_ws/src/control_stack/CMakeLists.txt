@@ -64,6 +64,7 @@ find_package(Ceres REQUIRED)
    RobotPosition.msg
    RobotDatabase.msg
    RobotGoal.msg
+   KitchenOrders.msg
  )
 
  generate_messages(DEPENDENCIES 

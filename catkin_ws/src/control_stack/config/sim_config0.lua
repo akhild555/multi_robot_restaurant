@@ -41,9 +41,9 @@ pf = {
   -- goal_poses = {{33, 16, 0}, {-25, -17, 0}, {-10, -17, 0}, {5, -17, 0}};
   -- goal_poses = {{14, 14, 0}};
 
-  map = "../catkin_ws/src/control_stack/maps/simple_restaurant.map";
-  start_pose = {0.38, 0, 0};
-  goal_poses = {{0.38, 0, 0}};
+  map = "../catkin_ws/src/control_stack/maps/monarch.map";
+  start_pose = {10, 1, 0};
+  goal_poses = {{10, 1, 0}};
   
 --   map = "src/control_stack/maps/outside_grasp.map";
 --   start_pose = {-2.5, -1, 0};

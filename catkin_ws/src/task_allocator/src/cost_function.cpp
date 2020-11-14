@@ -12,137 +12,116 @@
 
 
 using json = nlohmann::json;
+void CostCalculation::all_tasks(const control_stack::KitchenOrders& msg){
 
-// Add msg as input
-void CostCalculation::getRobots() {
-  robots = {0, 1, 2};
-  num_robots = robots.size();
-  // robot_loc = {{0.38, 0}, {4, 0}, {8.62, 0}};
-  // robot_loc = {{0.98, 8.96},{1.98, 8.96},{2.98, 8.96}};
-   robot_loc = {{0.38, 0, 0},{4, 0, 0},{8.62, 0, 0}};
-  // Add code to read data from msg
+  // std::cout <<"table num - all tasks " << msg.table_number << std::endl;
+  all_orders.push_back(msg);
+  // std::cout<<"ALL TASKS fun: all_orders.size()"<<all_orders.size()<<std::endl;
+  for(int i=0; i<all_orders.size(); i++)
+  {
+    std::cout<<all_orders[i].order_number<<" ";
+  }
+  std::cout<<std::endl;
+  CostCalculation::getTasks();
 }
+void CostCalculation::getTasks(){
+  // std::vector<control_stack::KitchenOrders> all_orders) {
+  // std::cout<<"IN GETTASKS beg: "<<all_orders.size()<<std::endl;
 
-// Add msg as input
-void CostCalculation::getTasks() {
-  num_tasks = 3;
-  //   start_task_loc = {{4.5, 10.5}, {4.5, 10.5}, {4.5, 10.5}};
+  start_task_loc.clear();
+  end_task_loc.clear();
+  num_tasks = num_robots;
   std::ifstream file_input("src/control_stack/config/monarch_config.json");
-  json output;
-  file_input >> output;
+  json mon_restaurant_config;
+  file_input >> mon_restaurant_config;
 
-  float start_x1 =  output["Kitchen"]["x"];
-  float start_y1 =  output["Kitchen"]["y"];
-
-  start_task_loc = {{start_x1, start_y1}, {start_x1, start_y1}, {start_x1, start_y1}};
+  if(num_robots > all_orders.size())
+  {
+    num_tasks = all_orders.size();
+  }
   
-  float end_x1 =  output["Table_1"]["dropoff"]["x"];
-  float end_y1 =  output["Table_1"]["dropoff"]["y"];
-  float end_x2 =  output["Table_2"]["dropoff"]["x"];
-  float end_y2 =  output["Table_2"]["dropoff"]["y"];
-  float end_x3 =  output["Table_3"]["dropoff"]["x"];
-  float end_y3 =  output["Table_3"]["dropoff"]["y"];
+  for(int i=0; i<num_tasks; i++)
+  {
+    start_task_loc.push_back(std::vector<float>());
+    float start_x1 =  mon_restaurant_config["Kitchen"]["x"];
+    float start_y1 =  mon_restaurant_config["Kitchen"]["y"];
+    start_task_loc[i].push_back(start_x1);
+    start_task_loc[i].push_back(start_y1);
+    std::string table_num = "Table_" + std::to_string(all_orders[i].table_number); 
+    float end_x1 =  mon_restaurant_config[table_num]["dropoff"]["x"];
+    float end_y1 =  mon_restaurant_config[table_num]["dropoff"]["y"];
+    end_task_loc.push_back(std::vector<float>());
 
-  end_task_loc = {{end_x1, end_y1}, {end_x2, end_y2}, {end_x3, end_y3}};
-  // Add code to read data from msg
+    end_task_loc[i].push_back(end_x1);
+    end_task_loc[i].push_back(end_y1);
+
+  }
+  // all_orders.erase(0, num_tasks);
+  all_orders.erase(all_orders.begin(), all_orders.begin() +num_tasks);
+  std::cout<<"AFTER ERASE: all_orders.size()"<<all_orders.size()<<std::endl;
+  // num_tasks = all_orders.size();
+}
+void CostCalculation::getRobots(const control_stack::RobotDatabase& msg) {
+  // // Initialize Robot Index List
+  // std::vector<int> robot_list;
+  int i = 0;
+  robot_loc.clear();
+  // std::cout<<"in get robots"<<std::endl;
+  robots.clear();
+  // Loop Through Each Robot's Data (robot_data), Data = "robot" variable
+  for (const control_stack::RobotPosition& robot : msg.robot_data) {
+    // Check Robot's Status
+    // bool status = robot.robot_active;
+    // std::cout<<"Robot "<<robot.robot_index<<" status "<< std::boolalpha << robot.robot_active<<std::endl;
+
+    if (robot.robot_active == false) {
+      // Get Robot Indexes
+      // std::cout<<"in false "<<std::endl;
+      robots.push_back(robot.robot_index);
+      // Push Each Robot's Position
+      // std::vector<int> robot_loc_temp;
+      robot_loc.push_back(std::vector<float>());
+      // Get Each Robot's (X,Y) Position
+      // std::cout<<"x loc "<< robot.robot_position.linear.x<<std::endl;
+      // std::cout<<"y loc "<< robot.robot_position.linear.y<<std::endl;
+      robot_loc[i].push_back(
+          robot.robot_position.linear.x);  // Push Robot x-position
+      robot_loc[i].push_back(
+          robot.robot_position.linear.y);  // Push Robot y-position
+      i++;
+    }
+  }
+  num_robots = robots.size();
+  // std::cout<<"num robots"<<num_robots<<std::endl;
 }
 
-void CostCalculation::cost_function(
-    int num_tasks,
-    std::vector<std::vector<float>> start_task_loc,
-    int num_robots,
-    std::vector<int> robots,
-    std::vector<std::vector<float>> robot_loc) {
+
+
+void CostCalculation::cost_function(){
+    // int num_tasks,
+    // std::vector<std::vector<float>> start_task_loc,
+    // int num_robots,
+    // std::vector<int> robots,
+    // std::vector<std::vector<float>> robot_loc) {
   // Assign Costs to Available Robots
+  std::cout<<"num_tasks in cost fnc"<<num_tasks<<std::endl;
+  std::cout<<"num_robots in cost func"<<num_robots<<std::endl;
+  cost_matrix.clear();
+  std::cout<<"robot_loc.size() = "<<robot_loc.size()<<std::endl;
+  std::cout<<"start_task_loc.size() = "<<start_task_loc.size()<<std::endl;
   for (int i = 0; i < num_robots; i++) {
     // Get Robot ID
-    int robot_id = robots[i];
+    // int robot_id = robots[i];
     // Push Vector into 2D Vector
     cost_matrix.push_back(std::vector<int>());
     // Calculate Costs for Each Task
-
     for (int j = 0; j < num_tasks; j++) {
+      
       int cost = (int)(pow(start_task_loc[j][0] - robot_loc[i][0], 2) +
                        pow(start_task_loc[j][1] - robot_loc[i][1], 2));
       cost_matrix[i].push_back(cost);  // Push Sub-Vectors
     }
   }
+  // num_tasks = all_orders.size();
+  std::cout<<"NUM tasks after update in cost func "<<num_tasks<<std::endl;
 }
-
-// // Take in msg as Input
-// void CostCalculation::getRobots(const control_stack::RobotDatabase& msg) {
-//   // // Initialize Robot Index List
-//   // std::vector<int> robot_list;
-
-//   // Loop Through Each Robot's Data (robot_data), Data = "robot" variable
-//   for (control_stack::RobotPosition& robot : msg.robot_data) {
-//     // Check Robot's Status
-//     if (robot.robot_active == 1) {
-//       // Get Robot Indexes
-//       robots.push_back(robot.robot_index);
-//       // Push Each Robot's Position
-//       robot_loc.push_back(std::vector<int>());
-//       // Get Each Robot's (X,Y) Position
-//       robot_loc[i].push_back(
-//           robot.robot_position.linear.x);  // Push Robot x-position
-//       robot_loc[i].push_back(
-//           pos.robot_position.linear.y);  // Push Robot y-position
-//     }
-//   }
-//   // Get Numer of Robots
-//   num_robots = robots.size();
-// }
-
-// // Take in msg as Input
-// void CostCalculation::getTasks(const control_stack::KtichenState& msg) {
-//   std::vector<int> tasks;
-//   // Loop Through Each Task
-//   for (int task : msg.tasks) {
-//     // Get Tasks Coordiantes
-//     tasks.push_back(task);
-//     // Read From Config File Assign Start/End Loc
-//   }
-//   // Determine Total Number of Tasks
-//   num_tasks = msg.tasks.size();
-// }
-
-// // // Take in msg as Input
-// // void CostCalculation::getTasks(const control_stack::KtichenState& msg) {
-// //   num_tasks = msg.tasks.size();
-// //   // Loop Through Each Task
-// //   for (int task: msg.tasks) {
-// //     // Get Tasks Coordiantes
-// //     std::vector<float> task = std::next(msg.task_data,i);
-// //     // Push Each Tasks's Position
-// //     start_task_loc.push_back(std::vector<int>());
-// //     end_task_loc.push_back(std::vector<int>());
-// //     // Get Each Robot's (X,Y) Position
-// //     start_task_loc[i].push_back(task[0]);  // Push Task x-position
-// //     end_task_loc[i].push_back(task[1]);  // Push Task y-position
-// //   }
-
-// // }
-
-// void CostCalculation::cost_function(
-//     int num_tasks,
-//     std::vector<std::vector<float>> start_task_loc,
-//     int num_robots,
-//     std::vector<int> robots,
-//     std::vector<std::vector<float>> robot_loc) {
-//   // Assign Costs to Available Robots
-//   for (int i = 0; i < num_robots; i++) {
-//     // Get Robot ID
-//     int robot_id = robots[i];
-//     // Push Vector into 2D Vector
-//     cost_matrix.push_back(std::vector<int>());
-//     // Calculate Costs for Each Task
-//     for (int j = 0; j < num_tasks; j++) {
-//       // Calculate Distance From Current Position to Kitchen
-//       int cost = (int)(pow(start_task_loc[j][0] - robot_loc[i][0], 2) +
-//                        pow(start_task_loc[j][1] - robot_loc[i][1], 2) +
-//                        pow(end_task_loc[j][0] - start_task_loc[j][0], 2) +
-//                        pow(end_task_loc[j][1] - start_task_loc[j][1], 2));
-//       cost_matrix[i].push_back(cost);  // Push Sub-Vectors
-//     }
-//   }
-// }

@@ -26,43 +26,62 @@ int main(int argc, char **argv)
   ros::NodeHandle n;
   // Instantiate CostCalculation object
   CostCalculation cost_func;
+  // Subscribe to /robot_database, Extract Current Robot Positions
   ros::Subscriber robot_db = n.subscribe("/robot_database", 1000, &CostCalculation::getRobots, &cost_func);
+  // Subscribe to /kitchen_state, Extract New Tasks
   ros::Subscriber kitchen_test = n.subscribe("/kitchen_state", 1000, &CostCalculation::all_tasks, &cost_func);
+  // Create Publisher to Robot Goal
   ros::Publisher job_assignment = n.advertise<control_stack::RobotGoal>("/robot_goal", 1000);
+  // Set Callback Function Rate
   ros::Rate loop_rate(40);
 
   while (ros::ok())
   {
     // std::cout<<"Num tasks in main func: "<<cost_func.num_tasks<<std::endl;
-    if(cost_func.num_tasks>0 && cost_func.num_robots>0) 
+
+    // Check There Are Tasks to Allocate and Robots Available
+    if(cost_func.num_tasks>0 && cost_func.num_robots>0)
     {
       
-      // calculate cost matrix
-      std::cout<<"Inside if condintion main: num_tasks "<<cost_func.num_tasks<<std::endl;
+      // std::cout<<"Inside if condition main: num_tasks "<<cost_func.num_tasks<<std::endl;
+
+      // Calculate Cost Matrix
       cost_func.cost_function();
-      // const Hungarian::Matrix cost_x = ;
+      // Calculate Hungarian Matrix
       Hungarian::Result r = runHungarian(cost_func.cost_matrix, Hungarian::MODE_MINIMIZE_COST);
+      // Print Hungarian Matrix
       Hungarian::PrintMatrix(r.assignment);
-      // get job assignment vector
+      // Get Job Assignment Vector
       std::vector<int> assignments = assignment_msg(r, cost_func);
-      // Hungarian::PrintMatrix(assignments);
+      
+      // Printing Out Job Assignment Vector 
       for(int i =0; i<assignments.size(); i++)
       {
         std::cout<<"assgn["<<i<<"]"<< assignments[i]<<std::endl;
       }
-      control_stack::RobotGoal robot_assgn;
-      geometry_msgs:: Twist t;
 
+      // Create Robot Goal Msg
+      control_stack::RobotGoal robot_assgn;
+      // Create Sub-Robot Goal Msg
+      geometry_msgs:: Twist t;
+      // Loop Through Assignments
       for (int i = 0; i < assignments.size(); i++)
       {
-        robot_assgn.robot_index = cost_func.robots[i];      
+        // Get Robot Index
+        robot_assgn.robot_index = cost_func.robots[i];
+        // Get Start Task Location 
         t.linear.x = cost_func.start_task_loc[assignments[i]][0];
         t.linear.y = cost_func.start_task_loc[assignments[i]][1];
+        // Pushback Start Task Location
         robot_assgn.robot_goal.push_back(t);
+        // Get End Task Location
         t.linear.x = cost_func.end_task_loc[assignments[i]][0];
         t.linear.y = cost_func.end_task_loc[assignments[i]][1];
+        // Pushback Goal Task Location
         robot_assgn.robot_goal.push_back(t);
+        // Publish Robot Goals
         job_assignment.publish(robot_assgn);
+        // Clear Robot Goals, Prepare for Next Robot's Goals
         robot_assgn.robot_goal.clear();
       }
       // cost_func.all_orders.erase(cost_func.all_orders.begin(), cost_func.all_orders.begin() +cost_func.num_tasks);
@@ -73,6 +92,7 @@ int main(int argc, char **argv)
       // cost_func.end_task_loc.clear();
       // cost_func.cost_matrix.clear();
     }
+    // Set num_tasks to Remaining Number of Orders
     cost_func.num_tasks = cost_func.all_orders.size();
 
     // ROS_INFO("In cost func while loop!");

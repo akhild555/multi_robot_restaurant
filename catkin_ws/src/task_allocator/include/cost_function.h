@@ -26,19 +26,14 @@ public:
   std::vector<std::vector<int>> cost_matrix;
   // Functions
   CostCalculation(){};
+  // Get New Tasks
   void all_tasks(const control_stack::KitchenOrders& msg);
+  // Get Current Robot Positions
   void getRobots(const control_stack::RobotDatabase& robot_msg);
-  // void getTasks(const control_stack::KtichenState& kitchen_msg);
-  // void all_tasks(const control_stack::KitchenOrders& msg);
-  // void getRobots();
+  // Get # of Tasks from Queue
   void getTasks();
-  // std::vector<control_stack::KitchenOrders> all_orders
+  // Calculate Task Costs
   void cost_function();
-  // int num_tasks,
-  //                    std::vector<std::vector<float>> start_task_loc,
-  //                    int num_robots,
-  //                    std::vector<int> robots,
-  //                    std::vector<std::vector<float>> robot_loc);
 
 
 };

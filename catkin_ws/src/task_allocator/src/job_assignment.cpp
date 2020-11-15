@@ -40,11 +40,11 @@ int main(int argc, char **argv)
     // std::cout<<"Num tasks in main func: "<<cost_func.num_tasks<<std::endl;
 
     // Check There Are Tasks to Allocate and Robots Available
-    if(cost_func.num_tasks>0 && cost_func.num_robots>0)
+    if(cost_func.all_orders.size() && cost_func.num_robots>0)
     {
       
       // std::cout<<"Inside if condition main: num_tasks "<<cost_func.num_tasks<<std::endl;
-
+      cost_func.getTasks();
       // Calculate Cost Matrix
       cost_func.cost_function();
       // Calculate Hungarian Matrix
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
       // cost_func.cost_matrix.clear();
     }
     // Set num_tasks to Remaining Number of Orders
-    cost_func.num_tasks = cost_func.all_orders.size();
+    // cost_func.num_tasks = cost_func.all_orders.size();
 
     // ROS_INFO("In cost func while loop!");
     ros::spinOnce();

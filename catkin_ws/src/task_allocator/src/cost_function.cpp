@@ -63,7 +63,7 @@ void CostCalculation::all_tasks(const control_stack::KitchenOrders& msg){
   std::cout<<std::endl;
 
   // Call getTasks to Remove # of Tasks for Assignment
-  CostCalculation::getTasks();
+  // CostCalculation::getTasks();
 }
 
 // Gets Orders To Be Assigned to Available Robots

@@ -31,11 +31,11 @@ std::vector<int> assignment_msg(Hungarian::Result result, CostCalculation cost_f
             }     
         }
     }
-    for(int i =0; i<assgn.size(); i++)
-    {
-        std::cout<<"from assignment msg"<<std::endl;
-        std::cout<<"assgn["<<i<<"]"<< assgn[i]<<std::endl;
-    }
+    // for(int i =0; i<assgn.size(); i++)
+    // {
+    //     std::cout<<"from assignment msg"<<std::endl;
+    //     std::cout<<"assgn["<<i<<"]"<< assgn[i]<<std::endl;
+    // }
     
     return assgn;
 }

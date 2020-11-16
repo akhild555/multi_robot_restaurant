@@ -32,7 +32,7 @@ public:
 
     order.order_number = counter;
     order.table_number = distr(gen);
-    order.drinks = (distr(gen) % 2 == 0) ? true : false;
+    order.drinks = false; //(distr(gen) % 2 == 0) ? true : false;
     order.food_ordered = "pasta";
     publishKitchenOrders();
   }

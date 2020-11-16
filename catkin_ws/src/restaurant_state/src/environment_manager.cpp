@@ -9,7 +9,7 @@ int main(int argc, char **argv)
   ros::NodeHandle nh;
   ros::Rate loop_rate(1);
 
-  int number_of_robots = 2;
+  int number_of_robots = 4;
   int number_of_tables = 17;
   int counter = 0;
 

@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   // Create Publisher to Robot Goal
   ros::Publisher job_assignment = n.advertise<control_stack::RobotGoal>("/robot_goal", 1000);
   // Set Callback Function Rate
-  ros::Rate loop_rate(40);
+  ros::Rate loop_rate(1);
 
   while (ros::ok())
   {
@@ -49,16 +49,20 @@ int main(int argc, char **argv)
       cost_func.cost_function();
       // Calculate Hungarian Matrix
       Hungarian::Result r = runHungarian(cost_func.cost_matrix, Hungarian::MODE_MINIMIZE_COST);
+      // Print Cost Matrix
+      // std::cout << "Cost Matrix"<< std::endl;
+      // Hungarian::PrintMatrix(r.cost);
       // Print Hungarian Matrix
-      Hungarian::PrintMatrix(r.assignment);
+      // std::cout << "Assignment Matrix"<< std::endl;
+      // Hungarian::PrintMatrix(r.assignment);
       // Get Job Assignment Vector
       std::vector<int> assignments = assignment_msg(r, cost_func);
       
       // Printing Out Job Assignment Vector 
-      for(int i =0; i<assignments.size(); i++)
-      {
-        std::cout<<"assgn["<<i<<"]"<< assignments[i]<<std::endl;
-      }
+      // for(int i =0; i<assignments.size(); i++)
+      // {
+      //   std::cout<<"assgn["<<i<<"]"<< assignments[i]<<std::endl;
+      // }
 
       // Create Robot Goal Msg
       control_stack::RobotGoal robot_assgn;
@@ -69,6 +73,7 @@ int main(int argc, char **argv)
       {
         // Get Robot Index
         robot_assgn.robot_index = cost_func.robots[i];
+        std::cout << "Robot " << robot_assgn.robot_index << " is assigned to Table " << cost_func.assigned_tasks[i] << std::endl;
         // Get Start Task Location 
         t.linear.x = cost_func.start_task_loc[assignments[i]][0];
         t.linear.y = cost_func.start_task_loc[assignments[i]][1];

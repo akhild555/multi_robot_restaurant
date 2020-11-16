@@ -15,6 +15,7 @@ class CostCalculation {
 public:
   // const std::vector<int>& tasks  = {};
   std::vector<control_stack::KitchenOrders> all_orders;
+  std::vector<int> assigned_tasks; // tasks already assigned to robots
   std::vector<int> robots;
   int num_robots = 0;
   std::vector<std::vector<float>> robot_loc;

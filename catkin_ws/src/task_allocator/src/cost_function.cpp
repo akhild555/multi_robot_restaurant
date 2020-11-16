@@ -9,9 +9,11 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include "ros/ros.h"
 
 
 using json = nlohmann::json;
+
 
 // Get Current Robot Positions
 void CostCalculation::getRobots(const control_stack::RobotDatabase& msg) {
@@ -28,8 +30,11 @@ void CostCalculation::getRobots(const control_stack::RobotDatabase& msg) {
     // bool status = robot.robot_active;
     // std::cout<<"Robot "<<robot.robot_index<<" status "<< std::boolalpha << robot.robot_active<<std::endl;
 
+    
+
     if (robot_msg.robot_active == false) {
       // Get Robot Indexes
+      // ROS_ERROR("ROBOT ACTIVE = FALSE!!!!!!!!!!!!! %d", robot_msg.robot_index);
       robots.push_back(robot_msg.robot_index);
       // Push Each Robot's Position
       robot_loc.push_back(std::vector<float>());
@@ -54,13 +59,13 @@ void CostCalculation::all_tasks(const control_stack::KitchenOrders& msg){
   // Add New Orders to Queue
   all_orders.push_back(msg);
   // std::cout<<"ALL TASKS fun: all_orders.size()"<<all_orders.size()<<std::endl;
-  std::cout<<"Order No. ";
-  // Print Out Order Numbers in Queue
-  for(int i=0; i<all_orders.size(); i++)
-  {
-    std::cout<<all_orders[i].order_number<<" ";
-  }
-  std::cout<<std::endl;
+  // std::cout<<"Order No. ";
+  // // Print Out Order Numbers in Queue
+  // for(int i=0; i<all_orders.size(); i++)
+  // {
+  //   std::cout<<all_orders[i].order_number<<" ";
+  // }
+  // std::cout<<std::endl;
 
   // Call getTasks to Remove # of Tasks for Assignment
   // CostCalculation::getTasks();
@@ -81,7 +86,10 @@ void CostCalculation::getTasks(){
   start_task_loc.clear();
   // Clear End Task Locations
   end_task_loc.clear();
-  std::cout<<"getTasks: No. Robots"<<num_robots<<std::endl;
+  // Clear assigned tasks
+  assigned_tasks.clear();
+  
+  // std::cout<<"getTasks: No. Robots"<<num_robots<<std::endl;
   // Set Number of Tasks = Number of Robots
   num_tasks = num_robots;
   // If More Robots Than Tasks, Limit To Number of Tasks Available
@@ -110,14 +118,14 @@ void CostCalculation::getTasks(){
     // Pushback End Task x,y
     end_task_loc[i].push_back(end_x1);
     end_task_loc[i].push_back(end_y1);
-
+    assigned_tasks.push_back(all_orders[i].table_number); // keep track of assigned order
   }
   // all_orders.erase(0, num_tasks);
-  std::cout<<"getTasks: start_task_loc.size() "<<start_task_loc.size()<<std::endl;
+  // std::cout<<"getTasks: start_task_loc.size() "<<start_task_loc.size()<<std::endl;
   // Remove Tasks to Be Assigned from Queue
   all_orders.erase(all_orders.begin(), all_orders.begin() +num_tasks);
   // Print Number of Remaining Orders
-  std::cout<<"getTasks: No. Remaining Orders: "<<all_orders.size()<<std::endl;
+  // std::cout<<"getTasks: No. Remaining Orders: "<<all_orders.size()<<std::endl;
   // num_tasks = all_orders.size();
 }
 
@@ -125,22 +133,24 @@ void CostCalculation::getTasks(){
 void CostCalculation::cost_function(){
 
 
-  std::cout<<"Cost Func No. Tasks"<<num_tasks<<std::endl;
-  std::cout<<"Cost Func No. Robots"<<num_robots<<std::endl;
+  // std::cout<<"Cost Func No. Tasks"<<num_tasks<<std::endl;
+  // std::cout<<"Cost Func No. Robots"<<num_robots<<std::endl;
 
-  std::cout<<"Cost Func robot_loc.size() = "<<robot_loc.size()<<std::endl;
-  std::cout<<"Cost Func start_task_loc.size() = "<<start_task_loc.size()<<std::endl;
+  // std::cout<<"Cost Func robot_loc.size() = "<<robot_loc.size()<<std::endl;
+  // std::cout<<"Cost Func start_task_loc.size() = "<<start_task_loc.size()<<std::endl;
   
   // Clear Cost Matrix Before Assigning New Values
   cost_matrix.clear();
   for (int i = 0; i < num_robots; i++) {
+
     // Push Vector into 2D Vector
     cost_matrix.push_back(std::vector<int>());
     // Calculate Costs for Each Task
     for (int j = 0; j < num_tasks; j++) {
-      
       int cost = (int)(pow(start_task_loc[j][0] - robot_loc[i][0], 2) +
-                       pow(start_task_loc[j][1] - robot_loc[i][1], 2));
+                       pow(start_task_loc[j][1] - robot_loc[i][1], 2) +
+                       pow(start_task_loc[j][0] - end_task_loc[j][0], 2) +
+                       pow(start_task_loc[j][1] - end_task_loc[j][1], 2));
       cost_matrix[i].push_back(cost);  // Push Sub-Vectors
     }
   }

@@ -42,8 +42,8 @@ pf = {
   -- goal_poses = {{14, 14, 0}};
 
   map = "../catkin_ws/src/control_stack/maps/monarch.map";
-  start_pose = {13, 1, 0};
-  goal_poses = {{13, 1, 0}};
+  start_pose = {10, 2.5, 0};
+  goal_poses = {{10, 2.5, 0}};
   
 --   map = "src/control_stack/maps/outside_grasp.map";
 --   start_pose = {-2.5, -1, 0};
@@ -82,10 +82,10 @@ od = {
 };
 
 limits = {
-  kMaxTraAcc = 0.4;
-  kMaxTraVel = 3;
-  kMaxRotAcc = 3;
-  kMaxRotVel = 3;
+  kMaxTraAcc = 1.0;
+  kMaxTraVel = 1.0;
+  kMaxRotAcc = 1.0;
+  kMaxRotVel = 1.0;
 };
 
 safety = {

@@ -82,10 +82,10 @@ od = {
 };
 
 limits = {
-  kMaxTraAcc = 0.4;
-  kMaxTraVel = 3;
-  kMaxRotAcc = 3;
-  kMaxRotVel = 3;
+  kMaxTraAcc = 1.0;
+  kMaxTraVel = 1.0;
+  kMaxRotAcc = 1.0;
+  kMaxRotVel = 1.0;
 };
 
 safety = {

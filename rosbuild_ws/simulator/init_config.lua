@@ -8,7 +8,7 @@
 
 map_name = "catkin_ws/src/control_stack/maps/monarch.map";
 -- start_poses = {{0.38, 0, 0},{4, 0, 0},{8.62, 0, 0},{0.38, 0.38, 0},{0.38, 0.38, 0}};
-start_poses = {{10, 1, 0},{11.5, 1, 0},{13, 1, 0},{0.38, 0.38, 0},{0.38, 0.38, 0}};
+start_poses = {{10, 1, 0},{11.5, 1, 0},{10, 2.5, 0},{11.5, 2.5, 0},{0.38, 0.38, 0}};
 -- map_name = "catkin_ws/src/control_stack/maps/loop.map";
 -- start_x = -4
 -- start_y = -4

@@ -88,6 +88,7 @@ void CostCalculation::getTasks(){
   end_task_loc.clear();
   // Clear assigned tasks
   assigned_tasks.clear();
+  assigned_orders.clear();
   
   // std::cout<<"getTasks: No. Robots"<<num_robots<<std::endl;
   // Set Number of Tasks = Number of Robots
@@ -118,7 +119,8 @@ void CostCalculation::getTasks(){
     // Pushback End Task x,y
     end_task_loc[i].push_back(end_x1);
     end_task_loc[i].push_back(end_y1);
-    assigned_tasks.push_back(all_orders[i].table_number); // keep track of assigned order
+    assigned_tasks.push_back(all_orders[i].table_number); // keep track of assigned table
+    assigned_orders.push_back(all_orders[i].order_number); // keep track of assigned order
   }
   // all_orders.erase(0, num_tasks);
   // std::cout<<"getTasks: start_task_loc.size() "<<start_task_loc.size()<<std::endl;

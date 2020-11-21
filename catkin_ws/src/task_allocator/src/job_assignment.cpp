@@ -84,6 +84,9 @@ int main(int argc, char **argv)
         t.linear.y = cost_func.end_task_loc[assignments[i]][1];
         // Pushback Goal Task Location
         robot_assgn.robot_goal.push_back(t);
+        // Publish order number
+        robot_assgn.order_number = cost_func.assigned_orders[i];
+        std::cout << "Published order number = " << robot_assgn.order_number  << std::endl;
         // Publish Robot Goals
         job_assignment.publish(robot_assgn);
         // Clear Robot Goals, Prepare for Next Robot's Goals

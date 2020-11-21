@@ -82,6 +82,7 @@ class Controller {
   virtual void UpdateGoal(std::vector<util::Pose>) = 0;
 
   virtual bool isRobotActive() = 0;
+  virtual bool Completed_Order() = 0;
 };
 
 }  // namespace controllers

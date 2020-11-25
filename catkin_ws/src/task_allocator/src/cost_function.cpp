@@ -92,6 +92,8 @@ void CostCalculation::getTasks(){
 
   // Clear Start Task Locations
   start_task_loc.clear();
+  // Clear Mid Task Locations
+  mid_task_loc.clear();
   // Clear End Task Locations
   end_task_loc.clear();
   // Clear assigned tasks
@@ -130,6 +132,109 @@ void CostCalculation::getTasks(){
     assigned_tasks.push_back(all_orders[i].table_number); // keep track of assigned table
     assigned_orders.push_back(all_orders[i].order_number); // keep track of assigned order
     std::cout << "Size of assigned_orders in get_tasks: " << assigned_orders.size() << std::endl;
+
+    // // Drinks and Food Ordered
+    // if(all_orders[i].food_ordered == true && all_orders[i].drinks == true){
+    //   // Pushback Start Task Location Vector After Getting Individual Values
+    //   start_task_loc.push_back(std::vector<float>());
+    //   // Get Start Task Location (Default Kitchen)
+    //   float start_x1 =  mon_restaurant_config["Kitchen"]["x"];
+    //   float start_y1 =  mon_restaurant_config["Kitchen"]["y"];
+    //   // Pushback Start Task x,y
+    //   start_task_loc[i].push_back(start_x1);
+    //   start_task_loc[i].push_back(start_y1);
+
+    //   // Pushback Mid Task Location Vector After Getting Individual Values
+    //   mid_task_loc.push_back(std::vector<float>());
+    //   // Get Mid Task Location (Default Kitchen)
+    //   float mid_x1 =  mon_restaurant_config["Drinks_bar"]["x"];
+    //   float mid_y1 =  mon_restaurant_config["Drinks_bar"]["y"];
+    //   // Pushback Mid Task x,y
+    //   mid_task_loc[i].push_back(mid_x1);
+    //   mid_task_loc[i].push_back(mid_y1);
+    //   std::cout << "Drinks and Food Ordered " << std::endl;      
+    
+    // } 
+    // // Only Food Ordered
+    // else if(all_orders[i].food_ordered == true && all_orders[i].drinks == false){
+    //   // Pushback Start Task Location Vector After Getting Individual Values
+    //   start_task_loc.push_back(std::vector<float>());
+    //   // Get Start Task Location (Default Kitchen)
+    //   float start_x1 =  mon_restaurant_config["Kitchen"]["x"];
+    //   float start_y1 =  mon_restaurant_config["Kitchen"]["y"];
+    //   // Pushback Start Task x,y
+    //   start_task_loc[i].push_back(start_x1);
+    //   start_task_loc[i].push_back(start_y1);
+    //   std::cout << "Only Food Ordered" << std::endl;
+
+    // }
+    // // Only Drinks Ordered
+    // else if(all_orders[i].food_ordered == false && all_orders[i].drinks == true){
+    //   // Pushback Start Task Location Vector After Getting Individual Values
+    //   start_task_loc.push_back(std::vector<float>());
+    //   // Get Start Task Location (Default Kitchen)
+    //   float start_x1 =  mon_restaurant_config["Drinks_bar"]["x"];
+    //   float start_y1 =  mon_restaurant_config["Drinks_bar"]["y"];
+    //   // Pushback Start Task x,y
+    //   start_task_loc[i].push_back(start_x1);
+    //   start_task_loc[i].push_back(start_y1);
+    //   std::cout << "Only Drinks Ordered " << std::endl;
+
+    // }
+    // // Food and Drink Cleanup
+    // else if(all_orders[i].drink_cleanup == true && all_orders[i].food_cleanup == true){
+    //   // Pushback Start Task Location Vector After Getting Individual Values
+    //   start_task_loc.push_back(std::vector<float>());
+    //   // Get Start Task Location (Default Kitchen)
+    //   float start_x1 =  mon_restaurant_config["Drinks_bar"]["x"];
+    //   float start_y1 =  mon_restaurant_config["Drinks_bar"]["y"];
+    //   // Pushback Start Task x,y
+    //   start_task_loc[i].push_back(start_x1);
+    //   start_task_loc[i].push_back(start_y1);
+    //   std::cout << "Food and Drink Cleanup " << std::endl;
+
+    // }
+    // // Food Cleanup Only
+    // else if(all_orders[i].drink_cleanup == true && all_orders[i].food_cleanup == true){
+    //   // Pushback Start Task Location Vector After Getting Individual Values
+    //   start_task_loc.push_back(std::vector<float>());
+    //   // Get Start Task Location (Default Kitchen)
+    //   float start_x1 =  mon_restaurant_config["Drinks_bar"]["x"];
+    //   float start_y1 =  mon_restaurant_config["Drinks_bar"]["y"];
+    //   // Pushback Start Task x,y
+    //   start_task_loc[i].push_back(start_x1);
+    //   start_task_loc[i].push_back(start_y1);
+    //   std::cout << "Food Cleanup Only " << std::endl;
+
+    // }
+    // // Drink Cleanup Only
+    // else if(all_orders[i].drink_cleanup == true && all_orders[i].food_cleanup == true){
+    //   // Pushback Start Task Location Vector After Getting Individual Values
+    //   start_task_loc.push_back(std::vector<float>());
+    //   // Get Start Task Location (Default Kitchen)
+    //   float start_x1 =  mon_restaurant_config["Drinks_bar"]["x"];
+    //   float start_y1 =  mon_restaurant_config["Drinks_bar"]["y"];
+    //   // Pushback Start Task x,y
+    //   start_task_loc[i].push_back(start_x1);
+    //   start_task_loc[i].push_back(start_y1);
+    //   std::cout << "Drink Cleanup Only " << std::endl;
+
+    // }
+
+    // // Convert Table Number to Read into Config Files
+    // std::string table_num = "Table_" + std::to_string(all_orders[i].table_number); 
+    // // Get End Task Location
+    // float end_x1 =  mon_restaurant_config[table_num]["dropoff"]["x"];
+    // float end_y1 =  mon_restaurant_config[table_num]["dropoff"]["y"];
+    // // Pushback End Task Location Vector After Getting Individual Values
+    // end_task_loc.push_back(std::vector<float>());
+    // // Pushback End Task x,y
+    // end_task_loc[i].push_back(end_x1);
+    // end_task_loc[i].push_back(end_y1);
+    // assigned_tasks.push_back(all_orders[i].table_number); // keep track of assigned table
+    // assigned_orders.push_back(all_orders[i].order_number); // keep track of assigned order
+
+
   }
   // all_orders.erase(0, num_tasks);
   // std::cout<<"getTasks: start_task_loc.size() "<<start_task_loc.size()<<std::endl;

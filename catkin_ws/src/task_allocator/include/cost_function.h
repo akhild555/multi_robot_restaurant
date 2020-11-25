@@ -24,6 +24,7 @@ public:
   // Kitchen State
   int num_tasks = 0;
   std::vector<std::vector<float>> start_task_loc;  // Kitchen Location
+  std::vector<std::vector<float>> mid_task_loc;    // Drinks Location
   std::vector<std::vector<float>> end_task_loc;    // Table Location
   // Cost Function Output
   std::vector<std::vector<int>> cost_matrix;

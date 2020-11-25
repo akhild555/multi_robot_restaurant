@@ -76,7 +76,9 @@ int main(int argc, char **argv)
       {
         // Get Robot Index
         robot_assgn.robot_index = cost_func.robots[i];
-        std::cout << "Robot " << robot_assgn.robot_index << " is assigned to Table " << cost_func.assigned_tasks[i] << std::endl;
+        // Get Table Number
+        robot_assgn.table_number = cost_func.assigned_tasks[i];
+        std::cout << "Robot " << robot_assgn.robot_index << " is assigned to Table " << robot_assgn.table_number << std::endl;
         // Get Start Task Location 
         t.linear.x = cost_func.start_task_loc[assignments[i]][0];
         t.linear.y = cost_func.start_task_loc[assignments[i]][1];
@@ -87,6 +89,8 @@ int main(int argc, char **argv)
         t.linear.y = cost_func.end_task_loc[assignments[i]][1];
         // Pushback Goal Task Location
         robot_assgn.robot_goal.push_back(t);
+        // Add Time Stamp
+        robot_assgn.stamp = ros::Time::now();
         // Publish order number
         robot_assgn.order_number = cost_func.assigned_orders[i];
         std::cout << "Published order number = " << robot_assgn.order_number  << std::endl;

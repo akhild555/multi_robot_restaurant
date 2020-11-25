@@ -30,10 +30,12 @@ public:
     std::mt19937 gen(rd()); // seed the generator
     std::uniform_int_distribution<> distr(1, number_of_tables); // define the range
 
+    order.stamp = ros::Time::now(); // Add Time Stamp
     order.order_number = counter;
     order.table_number = distr(gen);
-    order.drinks = false; //(distr(gen) % 2 == 0) ? true : false;
-    order.food_ordered = "pasta";
+    order.drinks = true; //(distr(gen) % 2 == 0) ? true : false;
+    // order.food_ordered = "pasta";
+    order.food_ordered = true;
     publishKitchenOrders();
   }
   

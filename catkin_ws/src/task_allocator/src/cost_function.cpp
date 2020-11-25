@@ -25,31 +25,38 @@ void CostCalculation::getRobots(const control_stack::RobotDatabase& msg) {
   robots.clear();
   // std::cout<<"in get robots"<<std::endl;
   // Loop Through Each Robot's Data (robot_data), Data = "robot_msg" variable
+
   for (const control_stack::RobotPosition& robot_msg : msg.robot_data) {
     // Check Robot's Status
     // bool status = robot.robot_active;
     // std::cout<<"Robot "<<robot.robot_index<<" status "<< std::boolalpha << robot.robot_active<<std::endl;
 
-    
-
-    if (robot_msg.robot_active == false) {
-      // Get Robot Indexes
-      // ROS_ERROR("ROBOT ACTIVE = FALSE!!!!!!!!!!!!! %d", robot_msg.robot_index);
-      robots.push_back(robot_msg.robot_index);
-      // Push Each Robot's Position
-      robot_loc.push_back(std::vector<float>());
-      // Get Each Robot's (X,Y) Position
-      // std::cout<<"x loc "<< robot.robot_position.linear.x<<std::endl;
-      // std::cout<<"y loc "<< robot.robot_position.linear.y<<std::endl;
-      robot_loc[i].push_back(robot_msg.robot_position.linear.x);  // Push Robot x-position
-      robot_loc[i].push_back(robot_msg.robot_position.linear.y);  // Push Robot y-position
-      // Increase Iterator
-      i++;
+    // std::cout << "Size of assigned orders: " <<  assigned_orders.size() << std::endl;
+    bool already_assigned = std::find(pending_orders.begin(), pending_orders.end(), robot_msg.order_number) != pending_orders.end();
+    if ((robot_msg.order_number == 0)  || already_assigned)
+    {
+      if (robot_msg.robot_active == false) {
+        // Get Robot Indexes
+        // ROS_ERROR("ROBOT ACTIVE = FALSE!!!!!!!!!!!!! %d", robot_msg.robot_index);
+        robots.push_back(robot_msg.robot_index);
+        // std::cout<<"getRobots No. Robots: "<<robots.size()<<std::endl;
+        // Push Each Robot's Position
+        robot_loc.push_back(std::vector<float>());
+        // Get Each Robot's (X,Y) Position
+        // std::cout<<"x loc "<< robot.robot_position.linear.x<<std::endl;
+        // std::cout<<"y loc "<< robot.robot_position.linear.y<<std::endl;
+        robot_loc[i].push_back(robot_msg.robot_position.linear.x);  // Push Robot x-position
+        robot_loc[i].push_back(robot_msg.robot_position.linear.y);  // Push Robot y-position
+        // Increase Iterator
+        i++;
+        pending_orders.erase(std::remove(pending_orders.begin(), pending_orders.end(), robot_msg.order_number), pending_orders.end());
+        // std::cout << "Size of assigned orders after erase: " <<  assigned_orders.size() << std::endl;
+      }
     }
   }
   // Determine Number of Available Robots
   num_robots = robots.size();
-  // std::cout<<"getRobots No. Robots"<<num_robots<<std::endl;
+  
 }
 
 // Gets New Orders and Gets Orders To Be Assigned to Available Robots
@@ -58,6 +65,7 @@ void CostCalculation::all_tasks(const control_stack::KitchenOrders& msg){
   // std::cout <<"table num - all tasks " << msg.table_number << std::endl;
   // Add New Orders to Queue
   all_orders.push_back(msg);
+  
   // std::cout<<"ALL TASKS fun: all_orders.size()"<<all_orders.size()<<std::endl;
   // std::cout<<"Order No. ";
   // // Print Out Order Numbers in Queue
@@ -121,11 +129,12 @@ void CostCalculation::getTasks(){
     end_task_loc[i].push_back(end_y1);
     assigned_tasks.push_back(all_orders[i].table_number); // keep track of assigned table
     assigned_orders.push_back(all_orders[i].order_number); // keep track of assigned order
+    std::cout << "Size of assigned_orders in get_tasks: " << assigned_orders.size() << std::endl;
   }
   // all_orders.erase(0, num_tasks);
   // std::cout<<"getTasks: start_task_loc.size() "<<start_task_loc.size()<<std::endl;
   // Remove Tasks to Be Assigned from Queue
-  all_orders.erase(all_orders.begin(), all_orders.begin() +num_tasks);
+  all_orders.erase(all_orders.begin(), all_orders.begin() + num_tasks);
   // Print Number of Remaining Orders
   // std::cout<<"getTasks: No. Remaining Orders: "<<all_orders.size()<<std::endl;
   // num_tasks = all_orders.size();

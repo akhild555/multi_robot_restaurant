@@ -27,7 +27,7 @@ int main(int argc, char **argv)
   // Instantiate CostCalculation object
   CostCalculation cost_func;
   // Subscribe to /robot_database, Extract Current Robot Positions
-  ros::Subscriber robot_db = n.subscribe("/robot_database", 1000, &CostCalculation::getRobots, &cost_func);
+  ros::Subscriber robot_db = n.subscribe("/robot_database", 1, &CostCalculation::getRobots, &cost_func);
   // Subscribe to /kitchen_state, Extract New Tasks
   ros::Subscriber kitchen_test = n.subscribe("/kitchen_state", 1000, &CostCalculation::all_tasks, &cost_func);
   // Create Publisher to Robot Goal
@@ -40,9 +40,12 @@ int main(int argc, char **argv)
     // std::cout<<"Num tasks in main func: "<<cost_func.num_tasks<<std::endl;
 
     // Check There Are Tasks to Allocate and Robots Available
+    // std::cout<<"job_assignment: No. Remaining Orders: "<< cost_func.all_orders.size()<<std::endl;
+    // std::cout<<"job_assignment: Num robots: "<< cost_func.num_robots<<std::endl;
+
+    
     if(cost_func.all_orders.size() && cost_func.num_robots>0)
     {
-      
       // std::cout<<"Inside if condition main: num_tasks "<<cost_func.num_tasks<<std::endl;
       cost_func.getTasks();
       // Calculate Cost Matrix
@@ -91,10 +94,10 @@ int main(int argc, char **argv)
         job_assignment.publish(robot_assgn);
         // Clear Robot Goals, Prepare for Next Robot's Goals
         robot_assgn.robot_goal.clear();
+        cost_func.pending_orders.push_back(cost_func.assigned_orders[i]);
       }
       // cost_func.all_orders.erase(cost_func.all_orders.begin(), cost_func.all_orders.begin() +cost_func.num_tasks);
       // std::cout<<"After erasing allocated tasks: all_orders.size()"<<cost_func.all_orders.size()<<std::endl;
-      
       // cost_func.robot_loc.clear();
       // cost_func.start_task_loc.clear();
       // cost_func.end_task_loc.clear();

@@ -78,6 +78,8 @@ CONFIG_STRING(laser_tf_frame, "frames.laser_tf_frame");
 CONFIG_FLOAT(robot_radius, "pf.kRobotRadius");
 CONFIG_FLOAT(safety_margin, "pf.kSafetyMargin");
 
+CONFIG_FLOATLIST(robot_color, "pf.color");
+
 }  // namespace params
 
 struct ControllerList {
@@ -203,7 +205,7 @@ class StateMachine {
         state_estimator_->GetEstimatedPose().tra,
         params::CONFIG_robot_radius, 0.1,
         params::CONFIG_map_tf_frame,
-    "robot_size", 0, 1, 0, 1, 0.05));
+    "robot_size", params::CONFIG_robot_color[0], params::CONFIG_robot_color[1], params::CONFIG_robot_color[2], params::CONFIG_robot_color[3], 0.05));
     const Eigen::Vector2f front_offset =
         Eigen::Rotation2Df(state_estimator_->GetEstimatedPose().rot) *
         Eigen::Vector2f(
@@ -217,7 +219,7 @@ class StateMachine {
         state_estimator_->GetEstimatedPose().tra,
         params::CONFIG_robot_radius + params::CONFIG_safety_margin,
         0.1, params::CONFIG_map_tf_frame,
-        "safety_size", 0, 0, 1, 0.1, 0.05));
+        "safety_size", params::CONFIG_robot_color[0], params::CONFIG_robot_color[1], params::CONFIG_robot_color[2], 0.1, 0.05));
 
     const auto cd = util::physics::ComputeCommandDelta(
         state_estimator_->GetEstimatedPose(),
@@ -239,7 +241,7 @@ class StateMachine {
     dpw_->robot_size_pub_.publish(visualization::MakeCylinder(
         tr.final_pose.tra,
         params::CONFIG_robot_radius + params::CONFIG_safety_margin, 0.1,
-        params::CONFIG_map_tf_frame, "final_safety", 1, 0, 0, 0.1, 0.05));
+        params::CONFIG_map_tf_frame, "final_safety", 1, 0, 0, 0.0, 0.05));
 
     std::vector<util::Wall> colliding_walls;
     for (const auto& w : full_map.lines) {

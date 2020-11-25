@@ -308,16 +308,41 @@ void Simulator::initSimulatorVizMarkers() {
   color[3] = 1.0;
   initVizMarker(lineListMarker, "map_lines", 0, "linelist", p, scale, 0.0,
       color);
-
+  vector<vector<float>> robot_colors;
+  robot_colors.resize(10);
+  robot_colors[0] = {94.0/255.0, 156.0/255.0, 255.0/255.0, 1.0};
+  robot_colors[1] = {255.0/255.0, 95.0/255.0, 245.0/255.0, 1.0};
+  robot_colors[2] = {9.0/255.0, 255.0/255.0, 0.0/255.0, 1.0};
+  robot_colors[3] = {115.0/255.0, 154.0/255.0, 57.0/255.0, 1.0};
+  robot_colors[4] = {162.0/255.0, 0.0/255.0, 255.0/255.0, 1.0};
+  robot_colors[5] = {0.0/255.0, 0.0/255.0, 0.0/255.0, 1.0};
+  robot_colors[6] = {0.0/255.0, 255.0/255.0, 255.0/255.0, 1.0};
+  robot_colors[7] = {188.0/255.0, 255.0/255.0, 0.0/255.0, 1.0};
+  robot_colors[8] = {255.0/255.0, 162.0/255.0, 0.0/255.0, 1.0};
+  robot_colors[9] = {255.0/255.0, 0.0/255.0, 0.0/255.0, 1.0};
+  // for(int i=0;i<robot_colors.size();i++){
+  //   robot_colors[i][0] = 94.0 / 255.0;
+  //   robot_colors[i][1] = 156.0 / 255.0;
+  //   robot_colors[i][2] = 255.0 / 255.0;
+  //   robot_colors[i][3] = 0.8;
+  // }
+  // for (auto& rps : robot_pub_subs_) {
+  int index = 0;
   for (auto& rps : robot_pub_subs_) {
+    //change here to get various colors for each robot
     p.pose.position.z = 0.5 * CONFIG_car_height;
     scale.x = CONFIG_car_length;
     scale.y = CONFIG_car_width;
     scale.z = CONFIG_car_height;
-    color[0] = 94.0 / 255.0;
-    color[1] = 156.0 / 255.0;
-    color[2] = 255.0 / 255.0;
-    color[3] = 0.8;
+    color[0] = robot_colors[index][0];
+    color[1] = robot_colors[index][1];
+    color[2] = robot_colors[index][2];
+    color[3] = robot_colors[index][3];
+    index = index+1;
+    // color[0] = 94.0 / 255.0;
+    // color[1] = 156.0 / 255.0;
+    // color[2] = 255.0 / 255.0;
+    // color[3] = 0.8;
     initVizMarker(rps.robotPosMarker, "robot_position", 1, "cube", p, scale, 0.0,
         color);
   }

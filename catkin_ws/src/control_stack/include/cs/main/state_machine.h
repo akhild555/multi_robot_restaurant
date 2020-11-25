@@ -131,6 +131,10 @@ struct ControllerList {
     return controller_array[current_controller_]->isRobotActive();
   }
 
+  bool Completed_Order(){
+    return controller_array[current_controller_]->Completed_Order();
+  }
+
   util::Twist Execute() {
     static constexpr bool kDebug = false;
     for (int num_transitions = 0; num_transitions < 8; ++num_transitions) {
@@ -168,6 +172,8 @@ class StateMachine {
   ControllerList controller_list_;
   std::string pub_sub_prefix_;
   int robot_index_;
+  int old_order_number_ = 0;
+  int order_number_;
   // ===========================================================================
 
   cs::state_estimation::StateEstimator* MakeStateEstimator(ros::NodeHandle* n) {
@@ -337,6 +343,7 @@ class StateMachine {
     for (geometry_msgs::Twist goal: msg.robot_goal) {
       goal_list.push_back(util::Pose(goal));
     }
+    order_number_ = msg.order_number;
     // update goal
     controller_list_.UpdateGoal(goal_list);
 
@@ -349,6 +356,16 @@ class StateMachine {
     control_stack::RobotPosition msg;
     msg.stamp = ros::Time::now();
     msg.robot_index = robot_index_;
+    if (controller_list_.Completed_Order()) // robot not active
+    {
+      msg.order_number = old_order_number_;
+      old_order_number_ = order_number_;
+    }
+    else // robot active
+    {
+      msg.order_number = old_order_number_;
+    }
+    // msg.order_number = controller_list_.Completed_Order() ? order_number_ : -1;
     msg.robot_position = est_pose.ToTwist();
     msg.robot_active =  controller_list_.isRobotActive();
     dpw_ ->position_with_index_pub_.publish(msg);

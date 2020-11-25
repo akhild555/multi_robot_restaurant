@@ -65,7 +65,9 @@ NavController::NavController(
                          params::CONFIG_local_inflation),
       current_goal_(params::CONFIG_goal_poses.front()),
       current_goal_index_(-1),
-      robot_active_(false) {}
+      robot_active_(false),
+      completed_order_(false),
+      counter(0) {}
 
 void DrawPath(cs::main::DebugPubWrapper* dpw,
               const path_finding::Path2f& p,
@@ -141,8 +143,19 @@ void NavController::RefreshGoal() {
       current_goal_ = goal_list_[current_goal_index_];
       ROS_INFO("New Goal: %f , %f, %f", current_goal_.tra.x(), current_goal_.tra.y(), current_goal_.rot);
       robot_active_ = true;
+      completed_order_ = false;
+      counter++;
     } else {
       robot_active_ = false;
+      if (counter == 0)
+      {
+        completed_order_ = false;
+      }
+      else
+      {
+        completed_order_ = true;
+        counter = 0;
+      }
     }
   }
 
@@ -205,6 +218,10 @@ void NavController::UpdateGoal(std::vector<util::Pose> new_goal_list) {
 
 bool NavController::isRobotActive() {
   return robot_active_;
+}
+
+bool NavController::Completed_Order() {
+  return completed_order_;
 }
 
 }  // namespace controllers

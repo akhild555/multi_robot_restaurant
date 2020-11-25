@@ -422,4 +422,3 @@ Hungarian::Result runHungarian(const Hungarian::Matrix &input, Hungarian::MODE m
 
   
 }
-

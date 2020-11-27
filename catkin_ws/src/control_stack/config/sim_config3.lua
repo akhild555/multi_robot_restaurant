@@ -56,6 +56,7 @@ laser = {
     kRobotRadius = 0.1;
     kSafetyMargin = 0.2;
     kCollisionRollout = 3;
+    color = {0.5, 0.5, 0.0, 1.0};
   };
   
   frames = {

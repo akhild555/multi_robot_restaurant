@@ -23,6 +23,7 @@ public:
   std::vector<std::vector<float>> robot_loc;
   // Kitchen State
   int num_tasks = 0;
+  std::vector<std::string> task_type; // Type of Task
   std::vector<std::vector<float>> start_task_loc;  // Kitchen Location
   std::vector<std::vector<float>> mid_task_loc;    // Drinks Location
   std::vector<std::vector<float>> end_task_loc;    // Table Location

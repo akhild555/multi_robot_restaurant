@@ -33,9 +33,11 @@ public:
     order.stamp = ros::Time::now(); // Add Time Stamp
     order.order_number = counter;
     order.table_number = distr(gen);
-    order.drinks = true; //(distr(gen) % 2 == 0) ? true : false;
+    order.drinks_ordered = false; //(distr(gen) % 2 == 0) ? true : false;
     // order.food_ordered = "pasta";
     order.food_ordered = true;
+    order.drink_cleanup = false;
+    order.food_cleanup = false;
     publishKitchenOrders();
   }
   

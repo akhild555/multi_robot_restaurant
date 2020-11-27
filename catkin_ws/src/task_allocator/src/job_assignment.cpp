@@ -82,8 +82,13 @@ int main(int argc, char **argv)
         // Get Start Task Location 
         t.linear.x = cost_func.start_task_loc[assignments[i]][0];
         t.linear.y = cost_func.start_task_loc[assignments[i]][1];
-        // Pushback Start Task Location
+        // Pushback Mid Task Location
         robot_assgn.robot_goal.push_back(t);
+        if (cost_func.mid_task_loc[assignments[i]][0] && cost_func.mid_task_loc[assignments[i]][1] != -1){
+          t.linear.x = cost_func.mid_task_loc[assignments[i]][0];
+          t.linear.y = cost_func.mid_task_loc[assignments[i]][1];
+          robot_assgn.robot_goal.push_back(t);
+        }
         // Get End Task Location
         t.linear.x = cost_func.end_task_loc[assignments[i]][0];
         t.linear.y = cost_func.end_task_loc[assignments[i]][1];
@@ -94,6 +99,8 @@ int main(int argc, char **argv)
         // Publish order number
         robot_assgn.order_number = cost_func.assigned_orders[i];
         std::cout << "Published order number = " << robot_assgn.order_number  << std::endl;
+        std::cout << cost_func.task_type[assignments[i]] << std::endl; // Publish Type of Task
+
         // Publish Robot Goals
         job_assignment.publish(robot_assgn);
         // Clear Robot Goals, Prepare for Next Robot's Goals

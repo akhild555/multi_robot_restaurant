@@ -3,6 +3,7 @@
 #include "kitchen_manager.h"
 #include "data_logger.h"
 #include "std_msgs/String.h"
+#include "table_state.h"
 
 int main(int argc, char **argv)
 {
@@ -18,10 +19,13 @@ int main(int argc, char **argv)
   KitchenManager kitchen_manager(nh);
   RobotDataManager data_manager(nh, number_of_robots);
   DataLogger data_logger(nh);
+  tableVisualize table_visualizer(nh, number_of_robots);
+  
   
   while (ros::ok())
   {    
     kitchen_manager.randOrderGenerator(number_of_tables, counter); // randomly generate order
+    table_visualizer.publishGlobalGoals();
     ros::spinOnce();
     loop_rate.sleep();
     counter++;

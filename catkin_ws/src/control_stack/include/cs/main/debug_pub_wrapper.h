@@ -72,6 +72,8 @@ struct DebugPubWrapper {
   ros::Publisher goal_pub_;
   ros::Publisher robot_path_pub_;
   ros::Publisher colliding_point_pub_;
+  ros::Publisher loc_poi_text_pub_;
+  ros::Publisher loc_tables_text_pub_;
 
   DebugPubWrapper() = delete;
 
@@ -103,6 +105,10 @@ struct DebugPubWrapper {
         pub_sub_prefix + "/robot_path", 10);
     colliding_point_pub_ = n->advertise<visualization_msgs::Marker>(
         pub_sub_prefix + "/colliding_point", 10);
+    loc_poi_text_pub_ = n->advertise<visualization_msgs::Marker>(
+        pub_sub_prefix + "/POI_text", 10);
+    loc_tables_text_pub_ = n->advertise<visualization_msgs::Marker>(
+        pub_sub_prefix + "/tables_text", 10);
   }
 };
 

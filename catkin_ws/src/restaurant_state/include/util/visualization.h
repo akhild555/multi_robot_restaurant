@@ -29,12 +29,6 @@
 #include <tuple>
 #include <vector>
 
-// #include "cs/motion_planning/trajectory_rollout.h"
-// #include "cs/path_finding/path_finder.h"
-// #include "cs/util/laser_scan.h"
-// #include "cs/util/map.h"
-// #include "cs/util/plane_fit.h"
-// #include "util/pose.h"
 
 namespace visualization {
 

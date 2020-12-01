@@ -54,10 +54,13 @@
 #include "shared/math/geometry.h"
 #include "shared/math/math_util.h"
 #include "shared/util/timer.h"
+#include "cs/util/json.h"
 
 #include <control_stack/RobotPosition.h>
 #include <control_stack/RobotGoal.h>
 #include <geometry_msgs/Twist.h>
+
+using json = nlohmann::json;
 
 namespace cs {
 namespace main {
@@ -350,7 +353,37 @@ class StateMachine {
     controller_list_.UpdateGoal(goal_list);
 
   }
+  
+  void AddTextCaller(json text_config_file){
+    std::vector<float> kitchen_pos = {text_config_file["Kitchen"]["x"],text_config_file["Kitchen"]["y"]};
+    std::vector<float> drinks_bar_pos = {text_config_file["Drinks_bar"]["x"],text_config_file["Drinks_bar"]["y"]};
+    std::vector<float> hostess_pos = {text_config_file["Hostess"]["x"],text_config_file["Hostess"]["y"]};
+    std::vector<float> glassware_cleaning_pos = {text_config_file["Glassware_cleaning"]["x"],text_config_file["Glassware_cleaning"]["y"]};
+    std::vector<float> table_cleaning_pos = {text_config_file["Tableware_cleaning"]["x"],text_config_file["Tableware_cleaning"]["y"]};
 
+    dpw_->loc_poi_text_pub_.publish(visualization::AddText(
+      kitchen_pos,0.5,0.5,params::CONFIG_map_tf_frame,"kitchen","Kitchen",0));
+    
+    dpw_->loc_poi_text_pub_.publish(visualization::AddText(
+      drinks_bar_pos,0.5,0.5,params::CONFIG_map_tf_frame,"drinks_bar","Drinks Bar",0));
+    
+    dpw_->loc_poi_text_pub_.publish(visualization::AddText(
+      hostess_pos,0.5,0.5,params::CONFIG_map_tf_frame,"hostess","Hostess",0));
+    
+    dpw_->loc_poi_text_pub_.publish(visualization::AddText(
+      glassware_cleaning_pos,0.5,0.5,params::CONFIG_map_tf_frame,"glassware_cleaning","Glassware Cleaning",0));
+    
+    dpw_->loc_poi_text_pub_.publish(visualization::AddText(
+      table_cleaning_pos,0.5,0.5,params::CONFIG_map_tf_frame,"table_cleaning","Tableware Cleaning",0));
+
+    //publishing for each table
+    for(int i=1;i<=17;i++){
+      std::vector<float> table_pos = {text_config_file["Table_"+std::to_string(i)]["x"],text_config_file["Table_"+std::to_string(i)]["y"]};
+      dpw_->loc_tables_text_pub_.publish(visualization::AddText(
+        table_pos,0.5,0.5,params::CONFIG_map_tf_frame,"table_"+std::to_string(i),"Table "+std::to_string(i),0));
+    }
+  }
+  
   util::Twist ExecuteController() {
     const auto est_pose = state_estimator_->GetEstimatedPose();
     dpw_->position_pub_.publish(est_pose.ToTwist());
@@ -381,6 +414,12 @@ class StateMachine {
     dpw_->map_pub_.publish(
         visualization::DrawWalls(map_.lines, "map", "map_ns"));
     DrawRobot(map_, command);
+
+    json text_config_file;
+    std::ifstream text_config_data("src/control_stack/config/table_config.json");
+    text_config_data>>text_config_file;
+    // call json file and extract data from it
+    AddTextCaller(text_config_file);
     return command_scaler_->ScaleCommand(command);
   }
 };

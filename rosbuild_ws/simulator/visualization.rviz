@@ -238,6 +238,42 @@ Visualization Manager:
         {}
       Queue Size: 100
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /robot0/tables_text
+      Name: Marker
+      Namespaces:
+        table_1: true
+        table_10: true
+        table_11: true
+        table_12: true
+        table_13: true
+        table_14: true
+        table_15: true
+        table_16: true
+        table_17: true
+        table_2: true
+        table_3: true
+        table_4: true
+        table_5: true
+        table_6: true
+        table_7: true
+        table_8: true
+        table_9: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /robot1/POI_text
+      Name: Marker
+      Namespaces:
+        drinks_bar: true
+        glassware_cleaning: true
+        hostess: true
+        kitchen: true
+        table_cleaning: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 255; 255; 255
@@ -267,25 +303,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 41.250648498535156
+      Distance: 33.274967193603516
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 14.229124069213867
-        Y: 7.148346900939941
-        Z: 2.6305348873138428
+        X: 19.052377700805664
+        Y: 8.222884178161621
+        Z: 2.684319496154785
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.3497965335845947
+      Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.5628814697265625
+      Yaw: 4.717881202697754
     Saved: ~
 Window Geometry:
   Displays:

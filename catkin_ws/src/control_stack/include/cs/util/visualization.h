@@ -484,5 +484,35 @@ inline visualization_msgs::Marker MakeCylinder(const Eigen::Vector2f& position,
   marker.color.b = b;
   return marker;
 }
-
+inline visualization_msgs::Marker AddText(const std::vector<float> position,
+                                               const float scale,
+                                               const float height,
+                                               const std::string& frame_id,
+                                               const std::string& ns,
+                                               const std::string& text,
+                                               const float z = 0) {
+  visualization_msgs::Marker marker;
+  marker.header.frame_id = frame_id;
+  marker.header.stamp = ros::Time();
+  marker.text = text;
+  marker.ns = ns;
+  marker.id = 0;
+  marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+  marker.action = visualization_msgs::Marker::ADD;
+  marker.scale.x = scale;
+  marker.scale.y = scale;
+  marker.scale.z = height;
+  marker.pose.position.x = position[0];
+  marker.pose.position.y = position[1];
+  marker.pose.position.z = z;
+  marker.pose.orientation.w = 0;
+  marker.pose.orientation.x = 0;
+  marker.pose.orientation.y = 0;
+  marker.pose.orientation.z = 0;
+  marker.color.a = 1;
+  marker.color.r = 0;
+  marker.color.g = 0;
+  marker.color.b = 0;
+  return marker;
+}
 }  // namespace visualization

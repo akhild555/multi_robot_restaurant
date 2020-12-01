@@ -43,7 +43,7 @@ public:
   
   void publishKitchenOrders() {
     order_publisher.publish(order);
-    ROS_INFO("published order");
+    ROS_INFO("Published order %i", order.order_number);
   }
 
 

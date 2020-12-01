@@ -101,6 +101,11 @@ int main(int argc, char **argv)
         std::cout << "Published order number = " << robot_assgn.order_number  << std::endl;
         std::cout << cost_func.task_type[assignments[i]] << std::endl; // Publish Type of Task
 
+        cost_func.task_alloc_memory[robot_assgn.robot_index] = robot_assgn.order_number;
+        std::stringstream ss;
+        ss<<"Order "<<robot_assgn.order_number<<" Robot "<<robot_assgn.robot_index;
+        ROS_INFO("%s",ss.str().c_str());
+
         // Publish Robot Goals
         job_assignment.publish(robot_assgn);
         // Clear Robot Goals, Prepare for Next Robot's Goals

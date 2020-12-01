@@ -34,12 +34,23 @@ void CostCalculation::getRobots(const control_stack::RobotDatabase& msg) {
 
     // std::cout << "Size of assigned orders: " <<  assigned_orders.size() <<
     // std::endl;
-    bool already_assigned =
-        std::find(pending_orders.begin(),
-                  pending_orders.end(),
-                  robot_msg.order_number) != pending_orders.end();
-    if ((robot_msg.order_number == 0) || already_assigned) {
-      if (robot_msg.robot_active == false) {
+    // bool already_assigned =
+    //     std::find(pending_orders.begin(),
+    //               pending_orders.end(),
+    //               robot_msg.order_number) != pending_orders.end();
+
+    // if ((robot_msg.order_number == 0) || already_assigned) {
+    //   if (robot_msg.robot_active == false) {
+      
+      // robot_msg.order_number != 0 &&
+
+      if ( (task_alloc_memory[robot_msg.robot_index] == robot_msg.order_number) && (!robot_msg.robot_active))
+      {
+        // std::stringstream ss;
+        // ss<<"Robot "<<robot_msg.robot_index<<" available, Memory order: "<<task_alloc_memory[robot_msg.robot_index];
+        // ss<<" feedback order: "<<robot_msg.order_number<<" status: "<<(bool)robot_msg.robot_active;
+        // ROS_ERROR("%s",ss.str().c_str());
+        
         // Get Robot Indexes
         // ROS_ERROR("ROBOT ACTIVE = FALSE!!!!!!!!!!!!! %d",
         // robot_msg.robot_index);
@@ -61,7 +72,7 @@ void CostCalculation::getRobots(const control_stack::RobotDatabase& msg) {
         // std::cout << "Size of assigned orders after erase: " <<
         // assigned_orders.size() << std::endl;
       }
-    }
+    // }
   }
   // Determine Number of Available Robots
   num_robots = robots.size();

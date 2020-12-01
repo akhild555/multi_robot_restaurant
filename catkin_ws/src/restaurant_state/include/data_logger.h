@@ -33,10 +33,12 @@ class DataLogger {
     }
 
     void TaskAllocationCallback(control_stack::RobotGoal allocated_task) {
+        ROS_DEBUG("TaskAllocationCallback order num %i", allocated_task.order_number);
         for(LogData& log_data: log_buffer) {
             if (log_data.order_num == allocated_task.order_number) {
                 log_data.robot_id = allocated_task.robot_index; 
                 log_data.task_allocation_time = allocated_task.stamp; 
+                ROS_DEBUG("Set robot id to %d", allocated_task.robot_index);
                 return;
             }
         }
@@ -120,10 +122,12 @@ class DataLogger {
         robot_status_subscriber = nh.subscribe("/robot_position",
                  100, &DataLogger::RobotStatusCallback, this);
 
-        log_file_name = "test_log";
-        buffer_file_name = "test_buffer";
+        log_file_name = "completed_task_log";
+        buffer_file_name = "incomplete_task_log";
         file_header = "order, robot, generate time, allocate time, deliver time, time to allocate, time to deliver, total time\n";
         write_to_file(file_header, log_file_name);
+        write_to_file(".", buffer_file_name);
+
     }
 
 };

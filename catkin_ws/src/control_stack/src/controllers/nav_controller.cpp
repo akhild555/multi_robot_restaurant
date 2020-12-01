@@ -66,8 +66,10 @@ NavController::NavController(
       current_goal_(params::CONFIG_goal_poses.front()),
       current_goal_index_(-1),
       robot_active_(false),
-      completed_order_(false),
-      counter(0) {}
+      current_goal_reached_(false) {}
+      // completed_order_(false),
+      // counter(0) 
+      // {}
 
 void DrawPath(cs::main::DebugPubWrapper* dpw,
               const path_finding::Path2f& p,
@@ -136,37 +138,31 @@ util::Pose GetLocalPathPose(const util::Pose& current_pose,
 }
 
 void NavController::RefreshGoal() {
-   if (motion_planner_.AtPose(current_goal_) 
-      || (current_goal_.tra.x() ==0 && current_goal_.tra.y() == 0 && current_goal_.rot == 0)) { 
-    if (current_goal_index_ + 1 < goal_list_.size()) {
-      ++current_goal_index_;
-      current_goal_ = goal_list_[current_goal_index_];
-      ROS_INFO("New Goal: %f , %f, %f", current_goal_.tra.x(), current_goal_.tra.y(), current_goal_.rot);
-      robot_active_ = true;
-      completed_order_ = false;
-      counter++;
-    } else {
-      robot_active_ = false;
-      if (counter == 0)
-      {
-        completed_order_ = false;
-      }
-      else
-      {
-        completed_order_ = true;
-        counter = 0;
-      }
-    }
+
+  if (motion_planner_.AtPose(current_goal_)) {
+    ROS_DEBUG("Current goal reached %f %f", current_goal_.tra.x(), current_goal_.tra.y());
+    current_goal_reached_ = true;
   }
 
-  std::stringstream ss;
-  ss<<"Goals: ";
-  for (auto g: goal_list_) {
-    ss<<g.tra.x()<<" "<<g.tra.y()<<" "<<g.rot<<" | ";
+  if (current_goal_reached_) {
+    ROS_DEBUG("Reached curr goal: %f, %f", current_goal_.tra.x(), current_goal_.tra.y());
+    // reached current goal
+    if (current_goal_index_ + 1 < goal_list_.size()) {
+      // new goal exists
+      ++current_goal_index_;
+      current_goal_ = goal_list_[current_goal_index_];
+      ROS_INFO("New Goal: %f , %f, %f ROBOT ACTIVE", current_goal_.tra.x(), current_goal_.tra.y(), current_goal_.rot);
+      robot_active_ = true;
+      current_goal_reached_ = false;
+    } else {
+      // no more goals in the list
+      ROS_DEBUG("No goals ROBOT INACTIVE");
+      robot_active_ = false;
+      
+    }
+  } else {
+    ROS_DEBUG("Not at goal %f, %f, Active: %d", current_goal_.tra.x(), current_goal_.tra.y(), robot_active_);
   }
-  ss<<"\n Index: "<<current_goal_index_;
-  ss<<"\n Active: "<<robot_active_;
-  ROS_INFO("%s", ss.str().c_str());
 
 }
 
@@ -221,7 +217,7 @@ bool NavController::isRobotActive() {
 }
 
 bool NavController::Completed_Order() {
-  return completed_order_;
+  return true;
 }
 
 }  // namespace controllers

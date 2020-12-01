@@ -174,8 +174,8 @@ class StateMachine {
   ControllerList controller_list_;
   std::string pub_sub_prefix_;
   int robot_index_;
-  int old_order_number_ = 0;
-  int order_number_;
+  // int old_order_number_ = 0;
+  int order_number_ = 0;
   // ===========================================================================
 
   cs::state_estimation::StateEstimator* MakeStateEstimator(ros::NodeHandle* n) {
@@ -341,6 +341,8 @@ class StateMachine {
     if (msg.robot_index != robot_index_) {
       return;
     }
+    ROS_DEBUG("Received order: %d with size %d", msg.order_number, (int)msg.robot_goal.size());
+    
     std::vector<util::Pose> goal_list;
     for (geometry_msgs::Twist goal: msg.robot_goal) {
       goal_list.push_back(util::Pose(goal));
@@ -355,26 +357,21 @@ class StateMachine {
     const auto est_pose = state_estimator_->GetEstimatedPose();
     dpw_->position_pub_.publish(est_pose.ToTwist());
 
-    control_stack::RobotPosition msg;
-    msg.stamp = ros::Time::now();
-    msg.robot_index = robot_index_;
-    if (controller_list_.Completed_Order()) // robot not active
-    {
-      msg.order_number = old_order_number_;
-      old_order_number_ = order_number_;
-    }
-    else // robot active
-    {
-      msg.order_number = old_order_number_;
-    }
-    // msg.order_number = controller_list_.Completed_Order() ? order_number_ : -1;
-    msg.robot_position = est_pose.ToTwist();
-    msg.robot_active =  controller_list_.isRobotActive();
-    dpw_ ->position_with_index_pub_.publish(msg);
-
     obstacle_detector_.UpdateObservation(
         est_pose, laser_, &(dpw_->detected_walls_pub_));
     const util::Twist command = controller_list_.Execute();     // CONTROLLER EXEC 
+    
+    control_stack::RobotPosition msg;
+    msg.stamp = ros::Time::now();
+    msg.robot_index = robot_index_;
+    msg.order_number = order_number_;
+    msg.robot_position = est_pose.ToTwist();
+    msg.robot_active =  controller_list_.isRobotActive();
+    if (!msg.robot_active) {
+      ROS_DEBUG("Order num: %i complete", msg.order_number);
+    }
+    dpw_ ->position_with_index_pub_.publish(msg);
+
     state_estimator_->UpdateLastCommand(command);
     PublishTransforms();
     state_estimator_->Visualize(&(dpw_->particle_pub_));

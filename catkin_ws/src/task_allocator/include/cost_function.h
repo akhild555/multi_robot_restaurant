@@ -10,9 +10,14 @@
 #include <control_stack/RobotGoal.h>
 #include <control_stack/RobotPosition.h>
 
+
 class CostCalculation {
 
+
 public:
+
+  std::vector<int> task_alloc_memory;
+
   // const std::vector<int>& tasks  = {};
   std::vector<control_stack::KitchenOrders> all_orders;
   std::vector<int> assigned_tasks; // tables already assigned to robots
@@ -30,7 +35,9 @@ public:
   // Cost Function Output
   std::vector<std::vector<int>> cost_matrix;
   // Functions
-  CostCalculation(){};
+  CostCalculation(){
+    task_alloc_memory = {0,0,0,0};
+  };
   // Get New Tasks
   void all_tasks(const control_stack::KitchenOrders& msg);
   // Get Current Robot Positions

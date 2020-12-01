@@ -38,8 +38,7 @@ class NavController : public Controller {
   util::Pose current_goal_;
   size_t current_goal_index_;
   bool robot_active_;
-  int completed_order_;
-  int counter;
+  bool current_goal_reached_;
   void RefreshGoal();
 
  public:

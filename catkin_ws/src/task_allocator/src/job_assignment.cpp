@@ -34,6 +34,9 @@ int main(int argc, char **argv)
   ros::Publisher job_assignment = n.advertise<control_stack::RobotGoal>("/robot_goal", 1000);
   // Set Callback Function Rate
   ros::Rate loop_rate(1);
+  std::vector<std::vector<float>> wait_loc = {{10.5, 0.73}, {12, 0.73}, {10, 5.12}, {10, 6.62}};
+  std::vector<int> wait_occ = {0,0,0,0};
+  std::vector<int> rob_occ = {0,0,0,0};
 
   while (ros::ok())
   {
@@ -43,8 +46,9 @@ int main(int argc, char **argv)
     // std::cout<<"job_assignment: No. Remaining Orders: "<< cost_func.all_orders.size()<<std::endl;
     // std::cout<<"job_assignment: Num robots: "<< cost_func.num_robots<<std::endl;
 
-    
-    if(cost_func.all_orders.size() && cost_func.num_robots>0)
+    if(cost_func.all_orders.size() && cost_func.num_robots>1) // Assign 1 robot as long as 2 are free, Bug: Robot 1 goes to Robot 0 table
+    // if(cost_func.all_orders.size()>1 && cost_func.num_robots>1) // Assign 2 robots
+    // if(cost_func.all_orders.size() && cost_func.num_robots>0)
     {
       // std::cout<<"Inside if condition main: num_tasks "<<cost_func.num_tasks<<std::endl;
       cost_func.getTasks();
@@ -89,11 +93,49 @@ int main(int argc, char **argv)
           t.linear.y = cost_func.mid_task_loc[assignments[i]][1];
           robot_assgn.robot_goal.push_back(t);
         }
+
         // Get End Task Location
         t.linear.x = cost_func.end_task_loc[assignments[i]][0];
         t.linear.y = cost_func.end_task_loc[assignments[i]][1];
         // Pushback Goal Task Location
         robot_assgn.robot_goal.push_back(t);
+
+        // Staging Location Code
+        //find closest wait location
+        int min_dist = 1000;
+        int wait_ind = 0;
+        for (int j = 0; j < wait_loc.size(); j++) {
+          //Reset wait_occ and rob_occ if the robot is being allocated a task
+          if (wait_occ[j] != 0){
+            if (rob_occ[j] == robot_assgn.robot_index){
+              wait_occ[j] = 0;
+              rob_occ[j] = 0;
+            }
+          }
+
+          if (wait_occ[j] == 0){
+            int wait_dist = (int)(pow(t.linear.x - wait_loc[j][0], 2) +
+                               pow(t.linear.y - wait_loc[j][1], 2));
+
+            if (wait_dist < min_dist){
+              min_dist = wait_dist;
+              wait_ind = j;
+            }
+          }
+        }
+        t.linear.x = wait_loc[wait_ind][0];
+        t.linear.y = wait_loc[wait_ind][1];
+        wait_occ[wait_ind] = 1;
+        rob_occ[wait_ind] = robot_assgn.robot_index;
+        // for (int k = 0; k < wait_occ.size(); k++) {
+        //   // std::cout<<"Wait occ : " << wait_occ[k];
+        //   // std::cout<<"   Robot occ : " << rob_occ[k] << std::endl;
+        // }
+        // Pushback Wait Location
+        robot_assgn.robot_goal.push_back(t);
+
+
+
         // Add Time Stamp
         robot_assgn.stamp = ros::Time::now();
         // Publish order number

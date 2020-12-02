@@ -16,15 +16,15 @@ int main(int argc, char **argv)
   int counter = 1;
   ROS_INFO("Starting environment manager with %d robots and %d tables", number_of_robots, number_of_tables);
 
-  KitchenManager kitchen_manager(nh);
+  KitchenManager kitchen_manager(nh, number_of_tables);
   RobotDataManager data_manager(nh, number_of_robots);
   DataLogger data_logger(nh);
   tableVisualize table_visualizer(nh, number_of_robots);
   
-  
   while (ros::ok())
   {    
-    kitchen_manager.randOrderGenerator(number_of_tables, counter); // randomly generate order
+    // kitchen_manager.randOrderGenerator(number_of_tables, counter); // randomly generate order
+    kitchen_manager.updateCounter(counter);
     table_visualizer.publishGlobalGoals();
     ros::spinOnce();
     loop_rate.sleep();

@@ -50,13 +50,10 @@ class KitchenManager {
       bool one_order_only = false;
 
       // update drop off times
-      for (int i = 0; i < order_statuses.size(); i++)
-      {
-        for (const control_stack::RobotPosition& robot_msg : msg.robot_data)
-        {
-            if (robot_msg.order_number == order_statuses[i].order_number && !robot_msg.robot_active)
-            {
-              ROS_ERROR("Order %d dropped off at Table %d", order_statuses[i].order_number, order_statuses[i].table_number);
+      for (int i = 0; i < order_statuses.size(); i++) {
+        for (const control_stack::RobotPosition& robot_msg : msg.robot_data) {
+            if (robot_msg.order_number == order_statuses[i].order_number && !robot_msg.robot_active) {
+              ROS_DEBUG("Order %d dropped off at Table %d", order_statuses[i].order_number, order_statuses[i].table_number);
               order_statuses[i].dropoff_time = ros::Time::now();
             }
         }
@@ -64,14 +61,12 @@ class KitchenManager {
 
       
       std::vector<int> finished_order_idx;
-      for (int i = 0; i < order_statuses.size(); i++)
-      {
+      for (int i = 0; i < order_statuses.size(); i++) {
         // check if customer has left the table
         int time_passed = ros::Time::now().sec - order_statuses[i].dropoff_time.sec;
-        if (time_passed >= order_statuses[i].customer_max_time && order_statuses[i].order_type == "meal")
-        {
+        if (time_passed >= order_statuses[i].customer_max_time && order_statuses[i].order_type == "meal") {
           // clean up table
-          ROS_ERROR("Table %d is vacant", order_statuses[i].table_number);
+          ROS_DEBUG("Table %d is vacant", order_statuses[i].table_number);
           createCleanOrder(i, order_statuses[i].table_number);
           int tb = order_statuses[i].table_number - 1;
           table_statuses[tb].occupied = false;
@@ -81,7 +76,7 @@ class KitchenManager {
         }
         if (time_passed >= order_statuses[i].clean_max_time && order_statuses[i].order_type == "cleanup") {
           // free up table for new orders
-          ROS_ERROR("Table %d is clean", order_statuses[i].table_number);
+          ROS_DEBUG("Table %d is clean", order_statuses[i].table_number);
           int tb = order_statuses[i].table_number - 1;
           table_statuses[tb].occupied = false;
           table_statuses[tb].cleaned = true;
@@ -124,7 +119,7 @@ class KitchenManager {
     // storeTableStatus(table_num);
     storeOrderStatus();
     publishKitchenOrders();
-    ROS_ERROR("Clean order number %d sent to table %d", order.order_number, order.table_number);
+    ROS_DEBUG("Clean order number %d sent to table %d", order.order_number, order.table_number);
   }
 
 
@@ -175,8 +170,8 @@ class KitchenManager {
       double rand_num = distr(gen);
 
       for (int i= 0; i < table_weights.size(); i++) {
-        std::cout << "Random number = " << rand_num << std::endl;
-        std::cout << "Table " << i + 1 << " Weight = " << table_weights[i] << std::endl;
+        // std::cout << "Random number = " << rand_num << std::endl;
+        // std::cout << "Table " << i + 1 << " Weight = " << table_weights[i] << std::endl;
         if (rand_num < table_weights[i]) {
           gen_table_num = i + 1;
           break;
@@ -184,7 +179,7 @@ class KitchenManager {
         rand_num -= table_weights[i];
       }
 
-      std::cout << "Generated Table number = " << gen_table_num << std::endl;
+      // std::cout << "Generated Table number = " << gen_table_num << std::endl;
       orderFood();
       orderDrinks();
       createMealOrder(gen_table_num);
@@ -255,7 +250,7 @@ class KitchenManager {
   
   void publishKitchenOrders()   {
     order_publisher.publish(order);
-    ROS_INFO("published order");
+    ROS_INFO("Published order %i", order.order_number);
   }
 
   
@@ -276,7 +271,6 @@ public:
       vacant_times.push_back(0.0);
     }
 
-    std::cout << "table_statuses table weight = " << table_statuses[5].weight << std::endl;
     order_publisher = nh.advertise<control_stack::KitchenOrders>("/kitchen_state", 100);
     ROS_INFO("Kitchen manager ready");
 

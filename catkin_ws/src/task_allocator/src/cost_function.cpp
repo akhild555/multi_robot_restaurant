@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm> 
 
 #include "ros/ros.h"
 
@@ -128,30 +129,6 @@ void CostCalculation::getTasks() {
   }
   // Get Task Start and End Locations
   for (int i = 0; i < num_tasks; i++) {
-    // // Pushback Start Task Location Vector After Getting Individual Values
-    // start_task_loc.push_back(std::vector<float>());
-    // // Get Start Task Location (Default Kitchen)
-    // float start_x1 =  mon_restaurant_config["Kitchen"]["x"];
-    // float start_y1 =  mon_restaurant_config["Kitchen"]["y"];
-    // // Pushback Start Task x,y
-    // start_task_loc[i].push_back(start_x1);
-    // start_task_loc[i].push_back(start_y1);
-    // // Convert Table Number to Read into Config Files
-    // std::string table_num = "Table_" +
-    // std::to_string(all_orders[i].table_number);
-    // // Get End Task Location
-    // float end_x1 =  mon_restaurant_config[table_num]["dropoff"]["x"];
-    // float end_y1 =  mon_restaurant_config[table_num]["dropoff"]["y"];
-    // // Pushback End Task Location Vector After Getting Individual Values
-    // end_task_loc.push_back(std::vector<float>());
-    // // Pushback End Task x,y
-    // end_task_loc[i].push_back(end_x1);
-    // end_task_loc[i].push_back(end_y1);
-    // assigned_tasks.push_back(all_orders[i].table_number); // keep track of
-    // assigned table assigned_orders.push_back(all_orders[i].order_number); //
-    // keep track of assigned order std::cout << "Size of assigned_orders in
-    // get_tasks: " << assigned_orders.size() << std::endl;
-
     // Drinks and Food Ordered
     if (all_orders[i].food_ordered == true && all_orders[i].drinks_ordered == true) {
       // Pushback Start Task Location Vector After Getting Individual Values
@@ -404,4 +381,23 @@ void CostCalculation::cost_function() {
   }
   // num_tasks = all_orders.size();
   // std::cout<<"NUM tasks after update in cost func "<<num_tasks<<std::endl;
+}
+
+// Get Random Assignments for Tasks
+std::vector<int> CostCalculation::getRandomAssignments() {
+  // Initialize Assignment Vector
+  std::vector<int> rand_assign;
+  // Create Assignment Vector
+  for (int i = 0; i < num_tasks; i++) {
+    rand_assign.push_back(i);
+    std::cout<< "Not Random Assign" << rand_assign[i] <<std::endl; // Print Pre-Random
+  }
+  // Shuffle Assignment Vector to Randomize
+  std::random_shuffle (rand_assign.begin(), rand_assign.end());
+
+  for (int i = 0; i < num_tasks; i++) {
+    std::cout<< "Random Assign" << rand_assign[i] <<std::endl; // Print Random
+  }
+
+  return rand_assign;
 }

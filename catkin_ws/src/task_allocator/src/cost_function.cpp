@@ -119,6 +119,8 @@ void CostCalculation::getTasks() {
   // Clear Number Locations Per Task
   task_type.clear();
 
+  order_types.clear();
+
   // std::cout<<"getTasks: No. Robots"<<num_robots<<std::endl;
   // Set Number of Tasks = Number of Robots
   num_tasks = num_robots;
@@ -184,6 +186,7 @@ void CostCalculation::getTasks() {
       end_task_loc[i].push_back(end_y1);
       assigned_tasks.push_back(all_orders[i].table_number);  // keep track of assigned table
       assigned_orders.push_back(all_orders[i].order_number);  // keep track of assigned order
+      order_types.push_back(true); // storing the order type in a variable of the class
       task_type.push_back("Drinks and Food Ordered ");  // keep track of task type
       // std::cout << "Drinks and Food Ordered " << std::endl;
 
@@ -218,6 +221,7 @@ void CostCalculation::getTasks() {
       end_task_loc[i].push_back(end_y1);
       assigned_tasks.push_back(all_orders[i].table_number);  // keep track of assigned table
       assigned_orders.push_back(all_orders[i].order_number);  // keep track of assigned order
+      order_types.push_back(true);  // storing the order type in a variable of the class 
       task_type.push_back("Only Food Ordered ");  // keep track of task type
       // std::cout << "Only Food Ordered" << std::endl;
 
@@ -251,6 +255,7 @@ void CostCalculation::getTasks() {
       end_task_loc[i].push_back(end_y1);
       assigned_tasks.push_back(all_orders[i].table_number);  // keep track of assigned table
       assigned_orders.push_back(all_orders[i].order_number);  // keep track of assigned order
+      order_types.push_back(true);  // storing the order type in a variable of the class 
       task_type.push_back("Only Drinks Ordered ");  // keep track of task type
       // std::cout << "Only Drinks Ordered " << std::endl;
 
@@ -287,6 +292,7 @@ void CostCalculation::getTasks() {
       end_task_loc[i].push_back(end_y1);
       assigned_tasks.push_back(all_orders[i].table_number);  // keep track of assigned table
       assigned_orders.push_back(all_orders[i].order_number);  // keep track of assigned order
+      order_types.push_back(false);  // storing the order type in a variable of the class 
       task_type.push_back("Food and Drink Cleanup ");  // keep track of task type
       // std::cout << "Food and Drink Cleanup " << std::endl;
 
@@ -320,6 +326,7 @@ void CostCalculation::getTasks() {
       end_task_loc[i].push_back(end_y1);
       assigned_tasks.push_back(all_orders[i].table_number);  // keep track of assigned table
       assigned_orders.push_back(all_orders[i].order_number);  // keep track of assigned order
+      order_types.push_back(false);  // storing the order type in a variable of the class
       task_type.push_back("Food Cleanup Only ");  // keep track of task type
       // std::cout << "Food Cleanup Only " << std::endl;
 
@@ -353,6 +360,7 @@ void CostCalculation::getTasks() {
       end_task_loc[i].push_back(end_y1);
       assigned_tasks.push_back(all_orders[i].table_number);  // keep track of assigned table
       assigned_orders.push_back(all_orders[i].order_number);  // keep track of assigned order
+      order_types.push_back(false);  // storing the order type in a variable of the class
       task_type.push_back("Drink Cleanup Only ");  // keep track of task type
       // std::cout << "Drink Cleanup Only " << std::endl;
     }

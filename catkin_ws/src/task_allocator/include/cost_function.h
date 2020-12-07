@@ -24,6 +24,7 @@ public:
   std::vector<int> assigned_orders; // orders already assigned to robots
   std::vector<int> pending_orders;
   std::vector<int> robots;
+  std::vector<bool> order_types;
   int num_robots = 0;
   std::vector<std::vector<float>> robot_loc;
   // Kitchen State

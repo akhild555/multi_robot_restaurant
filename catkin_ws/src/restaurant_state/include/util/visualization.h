@@ -41,13 +41,19 @@ inline visualization_msgs::Marker MakeCylinder(const std::vector<float> position
                                                const float g,
                                                const float b,
                                                const float alpha,
-                                               const float z = 0) {
+                                               const float z = 0,
+                                               const bool task_type = true) {
   visualization_msgs::Marker marker;
   marker.header.frame_id = frame_id;
   marker.header.stamp = ros::Time();
   marker.ns = ns;
   marker.id = 0;
-  marker.type = visualization_msgs::Marker::CYLINDER;
+  if(task_type==true){
+    marker.type = visualization_msgs::Marker::CYLINDER;
+  }
+  else{
+    marker.type = visualization_msgs::Marker::CUBE;
+  }
   marker.action = visualization_msgs::Marker::ADD;
   marker.scale.x = 2 * radius;
   marker.scale.y = 2 * radius;

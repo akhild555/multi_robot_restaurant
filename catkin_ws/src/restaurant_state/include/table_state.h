@@ -26,6 +26,7 @@ class tableVisualize{
     ros::Subscriber tasks_subscriber;
     
     std::vector<int> robot_table_data = {};
+    std::vector<bool> order_type_data = {};
     json mon_restaurant_config;
     json robot_configs;
 
@@ -41,6 +42,7 @@ class tableVisualize{
             if(i==msg.robot_index){
                 if(robot_table_data[i] != msg.table_number){
                     robot_table_data[i] = msg.table_number;
+                    order_type_data[i] = msg.order;
                 }
             }
         }
@@ -53,11 +55,13 @@ class tableVisualize{
         tasks_subscriber = nh.subscribe("/robot_goal", 100, &tableVisualize::RobotGoalCallBack, this);
         num_robots = no_of_robots;
         robot_table_data.resize(num_robots);
+        order_type_data.resize(num_robots);
         table_goal_publishers.resize(num_robots);
         for(int i=0;i<num_robots;i++){
             const std::string pub_sub_prefix_no_slash = "robot" + std::to_string(i);
             const std::string pub_sub_prefix = "/" + pub_sub_prefix_no_slash;
             robot_table_data[i] = -1;
+            order_type_data[i] = true;
             table_goal_publishers[i] = nh.advertise<visualization_msgs::Marker>(pub_sub_prefix + "/table_goal", 10);
         }
         // for(int i=0;i<num_robots;i++){
@@ -89,7 +93,7 @@ class tableVisualize{
                 vector<float> robot_color = {robot_configs[robot_num]["r"],robot_configs[robot_num]["g"],
                                                 robot_configs[robot_num]["b"],robot_configs[robot_num]["a"]};
                 table_goal_publishers[robot].publish(visualization::MakeCylinder(loc, 0.3, 0.1, "/map","final_delivery_goal",
-                                                            robot_color[0], robot_color[1], robot_color[2], robot_color[3], 0.05));
+                                                            robot_color[0], robot_color[1], robot_color[2], robot_color[3], 0.05, order_type_data[robot]));
             }
         }
     }

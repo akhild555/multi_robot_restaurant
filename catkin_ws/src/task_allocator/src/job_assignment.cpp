@@ -6,8 +6,10 @@
 #include <control_stack/RobotGoal.h>
 #include <control_stack/KitchenOrders.h>
 #include <control_stack/RobotDatabase.h>
+#include "json.h"
 #include <vector>
 #include <sstream>
+#include <fstream>
 #include <string>
 
 void test_callback_1(const control_stack::RobotDatabase& msg)
@@ -37,6 +39,24 @@ int main(int argc, char **argv)
   std::vector<std::vector<float>> wait_loc = {{10.5, 0.73}, {12, 0.73}, {10, 5.12}, {10, 6.62}};
   std::vector<int> wait_occ = {0,0,0,0};
   std::vector<int> rob_occ = {0,0,0,0};
+  // Set Config File to Be Used
+  std::ifstream file_input("src/control_stack/config/monarch_config.json");
+  nlohmann::json mon_restaurant_config;
+  file_input >> mon_restaurant_config;
+  // Get Allocation Algorithm Booleans
+  bool hungarian_alg = mon_restaurant_config["Allocation_algorithm"]["Hungarian"];
+  bool random_alg = mon_restaurant_config["Allocation_algorithm"]["Random"];
+  // Staggered allocation flags
+  bool stagger = mon_restaurant_config["Staggered allocation"]["stagger"];
+  int stagger_num = mon_restaurant_config["Staggered allocation"]["stagger_num"];
+  int stagger_n_rob;
+  if (stagger){
+    // how many free robots to wait for before starting allocation
+    stagger_n_rob = stagger_num-1;
+  }
+  else{
+    stagger_n_rob = 0;
+  }
 
   while (ros::ok())
   {
@@ -46,30 +66,39 @@ int main(int argc, char **argv)
     // std::cout<<"job_assignment: No. Remaining Orders: "<< cost_func.all_orders.size()<<std::endl;
     // std::cout<<"job_assignment: Num robots: "<< cost_func.num_robots<<std::endl;
 
-    if(cost_func.all_orders.size() && cost_func.num_robots>1) // Assign 1 robot as long as 2 are free, Bug: Robot 1 goes to Robot 0 table
-    // if(cost_func.all_orders.size()>1 && cost_func.num_robots>1) // Assign 2 robots
+    if(cost_func.all_orders.size() && cost_func.num_robots>stagger_n_rob) // Assign when stagger_n_robots are free
+    // if(cost_func.all_orders.size()>1 && cost_func.num_robots>1) // Assign 2 robots, Bug: Robot 1 goes to Robot 0 table
     // if(cost_func.all_orders.size() && cost_func.num_robots>0)
     {
       // std::cout<<"Inside if condition main: num_tasks "<<cost_func.num_tasks<<std::endl;
-      cost_func.getTasks();
-      // Calculate Cost Matrix
-      cost_func.cost_function();
-      // Calculate Hungarian Matrix
-      Hungarian::Result r = runHungarian(cost_func.cost_matrix, Hungarian::MODE_MINIMIZE_COST);
-      // Print Cost Matrix
-      // std::cout << "Cost Matrix"<< std::endl;
-      // Hungarian::PrintMatrix(r.cost);
-      // Print Hungarian Matrix
-      // std::cout << "Assignment Matrix"<< std::endl;
-      // Hungarian::PrintMatrix(r.assignment);
-      // Get Job Assignment Vector
-      std::vector<int> assignments = assignment_msg(r, cost_func);
+      cost_func.getTasks(); // Get Tasks
+      std::vector<int> assignments; // Initialize Assignments Vector
+      // Check Algorithm for Assignment
+      if (hungarian_alg) // Use Hungarian Algorithm
+      {
+        // Calculate Cost Matrix
+        cost_func.cost_function();
+        // Calculate Hungarian Matrix
+        Hungarian::Result r = runHungarian(cost_func.cost_matrix, Hungarian::MODE_MINIMIZE_COST);
+        // Print Cost Matrix
+        // std::cout << "Cost Matrix"<< std::endl;
+        // Hungarian::PrintMatrix(r.cost);
+        // Print Hungarian Matrix
+        // std::cout << "Assignment Matrix"<< std::endl;
+        // Hungarian::PrintMatrix(r.assignment);
+        // Get Job Assignment Vector
+        assignments = assignment_msg(r, cost_func);
       
-      // Printing Out Job Assignment Vector 
-      // for(int i =0; i<assignments.size(); i++)
-      // {
-      //   std::cout<<"assgn["<<i<<"]"<< assignments[i]<<std::endl;
-      // }
+        // Printing Out Job Assignment Vector 
+        // for(int i =0; i<assignments.size(); i++)
+        // {
+        //   std::cout<<"assgn["<<i<<"]"<< assignments[i]<<std::endl;
+        // }
+      }
+      else if (random_alg) // Perform Random Assignments
+      {
+        assignments = cost_func.getRandomAssignments();
+      }
 
       // Create Robot Goal Msg
       control_stack::RobotGoal robot_assgn;
@@ -81,7 +110,7 @@ int main(int argc, char **argv)
         // Get Robot Index
         robot_assgn.robot_index = cost_func.robots[i];
         // Get Table Number
-        robot_assgn.table_number = cost_func.assigned_tasks[i];
+        robot_assgn.table_number = cost_func.assigned_tasks[assignments[i]];
         std::cout << "Robot " << robot_assgn.robot_index << " is assigned to Table " << robot_assgn.table_number << std::endl;
         // Get Start Task Location 
         t.linear.x = cost_func.start_task_loc[assignments[i]][0];

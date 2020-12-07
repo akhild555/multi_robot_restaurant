@@ -1,4 +1,14 @@
 {
+"Allocation_algorithm" : {
+    "Hungarian": true,
+    "Random": false
+    },
+
+"Staggered allocation" : {
+    "stagger": true,
+    "stagger_num": 2 
+},
+
 "Table_1" : { 
     "dropoff": {
         "x" : 17.46,
@@ -153,4 +163,5 @@
     "x": 34.3,
     "y": 9.46
     }
+
 }

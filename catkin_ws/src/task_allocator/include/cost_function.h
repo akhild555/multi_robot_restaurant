@@ -47,6 +47,8 @@ public:
   void getTasks();
   // Calculate Task Costs
   void cost_function();
+  // Generate Random Assignment
+  std::vector<int> getRandomAssignments();
 
 
 };

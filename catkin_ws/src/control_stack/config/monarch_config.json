@@ -4,6 +4,11 @@
     "Random": false
     },
 
+"Staggered allocation" : {
+    "stagger": false,
+    "stagger_num": 2 
+},
+
 "Table_1" : { 
     "dropoff": {
         "x" : 17.46,

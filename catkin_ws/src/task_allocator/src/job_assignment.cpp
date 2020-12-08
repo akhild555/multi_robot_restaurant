@@ -46,6 +46,17 @@ int main(int argc, char **argv)
   // Get Allocation Algorithm Booleans
   bool hungarian_alg = mon_restaurant_config["Allocation_algorithm"]["Hungarian"];
   bool random_alg = mon_restaurant_config["Allocation_algorithm"]["Random"];
+  // Staggered allocation flags
+  bool stagger = mon_restaurant_config["Staggered allocation"]["stagger"];
+  int stagger_num = mon_restaurant_config["Staggered allocation"]["stagger_num"];
+  int stagger_n_rob;
+  if (stagger){
+    // how many free robots to wait for before starting allocation
+    stagger_n_rob = stagger_num-1;
+  }
+  else{
+    stagger_n_rob = 0;
+  }
 
   while (ros::ok())
   {
@@ -55,7 +66,7 @@ int main(int argc, char **argv)
     // std::cout<<"job_assignment: No. Remaining Orders: "<< cost_func.all_orders.size()<<std::endl;
     // std::cout<<"job_assignment: Num robots: "<< cost_func.num_robots<<std::endl;
 
-    if(cost_func.all_orders.size() && cost_func.num_robots>1) // Assign 1 robot as long as 2 are free
+    if(cost_func.all_orders.size() && cost_func.num_robots>stagger_n_rob) // Assign when stagger_n_robots are free
     // if(cost_func.all_orders.size()>1 && cost_func.num_robots>1) // Assign 2 robots, Bug: Robot 1 goes to Robot 0 table
     // if(cost_func.all_orders.size() && cost_func.num_robots>0)
     {

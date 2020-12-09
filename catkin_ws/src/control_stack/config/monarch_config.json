@@ -5,7 +5,7 @@
     },
 
 "Staggered allocation" : {
-    "stagger": false,
+    "stagger": true,
     "stagger_num": 2 
 },
 

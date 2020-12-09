@@ -65,14 +65,17 @@ class KitchenManager {
         // check if customer has left the table
         int time_passed = ros::Time::now().sec - order_statuses[i].dropoff_time.sec;
         if (time_passed >= order_statuses[i].customer_max_time && order_statuses[i].order_type == "meal") {
-          // clean up table
-          ROS_DEBUG("Table %d is vacant", order_statuses[i].table_number);
-          createCleanOrder(i, order_statuses[i].table_number);
-          int tb = order_statuses[i].table_number - 1;
-          table_statuses[tb].occupied = false;
-          table_statuses[tb].time_vacant = time_passed;
-          finished_order_idx.push_back(i);
-          one_order_only = true;
+          if (!one_order_only)
+          {
+            // clean up table
+            ROS_DEBUG("Table %d is vacant", order_statuses[i].table_number);
+            createCleanOrder(i, order_statuses[i].table_number);
+            int tb = order_statuses[i].table_number - 1;
+            table_statuses[tb].occupied = false;
+            table_statuses[tb].time_vacant = time_passed;
+            finished_order_idx.push_back(i);
+            one_order_only = true;
+          }
         }
         if (time_passed >= order_statuses[i].clean_max_time && order_statuses[i].order_type == "cleanup") {
           // free up table for new orders

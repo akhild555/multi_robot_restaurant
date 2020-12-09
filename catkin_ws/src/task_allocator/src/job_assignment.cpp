@@ -110,7 +110,7 @@ int main(int argc, char **argv)
         // Get Robot Index
         robot_assgn.robot_index = cost_func.robots[i];
         // Get Table Number
-        robot_assgn.table_number = cost_func.assigned_tasks[i];
+        robot_assgn.table_number = cost_func.assigned_tasks[assignments[i]];
         std::cout << "Robot " << robot_assgn.robot_index << " is assigned to Table " << robot_assgn.table_number << std::endl;
         // Get Start Task Location 
         t.linear.x = cost_func.start_task_loc[assignments[i]][0];

@@ -135,9 +135,10 @@ void CostCalculation::getTasks() {
     if (all_orders[i].food_ordered == true && all_orders[i].drinks_ordered == true) {
       // Pushback Start Task Location Vector After Getting Individual Values
       start_task_loc.push_back(std::vector<float>());
+      std::string pickup_loc = std::to_string(i);
       // Get Start Task Location (Default Kitchen)
-      float start_x1 = mon_restaurant_config["Kitchen"]["x"];
-      float start_y1 = mon_restaurant_config["Kitchen"]["y"];
+      float start_x1 = mon_restaurant_config["Kitchen"][pickup_loc]["x"];
+      float start_y1 = mon_restaurant_config["Kitchen"][pickup_loc]["y"];
       // Pushback Start Task x,y
       start_task_loc[i].push_back(start_x1);
       start_task_loc[i].push_back(start_y1);
@@ -145,8 +146,8 @@ void CostCalculation::getTasks() {
       // Pushback Mid Task Location Vector After Getting Individual Values
       mid_task_loc.push_back(std::vector<float>());
       // Get Mid Task Location (Default Kitchen)
-      float mid_x1 = mon_restaurant_config["Drinks_bar"]["x"];
-      float mid_y1 = mon_restaurant_config["Drinks_bar"]["y"];
+      float mid_x1 = mon_restaurant_config["Drinks_bar"][pickup_loc]["x"];
+      float mid_y1 = mon_restaurant_config["Drinks_bar"][pickup_loc]["y"];
       // Pushback Mid Task x,y
       mid_task_loc[i].push_back(mid_x1);
       mid_task_loc[i].push_back(mid_y1);
@@ -172,9 +173,10 @@ void CostCalculation::getTasks() {
     else if (all_orders[i].food_ordered == true && all_orders[i].drinks_ordered == false) {
       // Pushback Start Task Location Vector After Getting Individual Values
       start_task_loc.push_back(std::vector<float>());
+      std::string pickup_loc = std::to_string(i);
       // Get Start Task Location (Default Kitchen)
-      float start_x1 = mon_restaurant_config["Kitchen"]["x"];
-      float start_y1 = mon_restaurant_config["Kitchen"]["y"];
+      float start_x1 = mon_restaurant_config["Kitchen"][pickup_loc]["x"];
+      float start_y1 = mon_restaurant_config["Kitchen"][pickup_loc]["y"];
       // Pushback Start Task x,y
       start_task_loc[i].push_back(start_x1);
       start_task_loc[i].push_back(start_y1);
@@ -207,9 +209,10 @@ void CostCalculation::getTasks() {
     else if (all_orders[i].food_ordered == false && all_orders[i].drinks_ordered == true) {
       // Pushback Start Task Location Vector After Getting Individual Values
       start_task_loc.push_back(std::vector<float>());
+      std::string pickup_loc = std::to_string(i);
       // Get Start Task Location (Default Kitchen)
-      float start_x1 = mon_restaurant_config["Drinks_bar"]["x"];
-      float start_y1 = mon_restaurant_config["Drinks_bar"]["y"];
+      float start_x1 = mon_restaurant_config["Drinks_bar"][pickup_loc]["x"];
+      float start_y1 = mon_restaurant_config["Drinks_bar"][pickup_loc]["y"];
       // Pushback Start Task x,y
       start_task_loc[i].push_back(start_x1);
       start_task_loc[i].push_back(start_y1);
@@ -252,16 +255,17 @@ void CostCalculation::getTasks() {
 
       // Pushback Mid Task Location Vector After Getting Individual Values
       mid_task_loc.push_back(std::vector<float>());
+      std::string pickup_loc = std::to_string(i);
       // Get Mid Task Location (Default Kitchen)
-      float mid_x1 = mon_restaurant_config["Glassware_cleaning"]["x"];
-      float mid_y1 = mon_restaurant_config["Glassware_cleaning"]["y"];
+      float mid_x1 = mon_restaurant_config["Glassware_cleaning"][pickup_loc]["x"];
+      float mid_y1 = mon_restaurant_config["Glassware_cleaning"][pickup_loc]["y"];
       // Pushback Mid Task x,y
       mid_task_loc[i].push_back(mid_x1);
       mid_task_loc[i].push_back(mid_y1);
 
       // Get End Task Location
-      float end_x1 = mon_restaurant_config["Tableware_cleaning"]["x"];
-      float end_y1 = mon_restaurant_config["Tableware_cleaning"]["y"];
+      float end_x1 = mon_restaurant_config["Tableware_cleaning"][pickup_loc]["x"];
+      float end_y1 = mon_restaurant_config["Tableware_cleaning"][pickup_loc]["y"];
       // Pushback End Task Location Vector After Getting Individual Values
       end_task_loc.push_back(std::vector<float>());
       // Pushback End Task x,y
@@ -289,13 +293,14 @@ void CostCalculation::getTasks() {
 
       // Pushback Mid Task Placeholder Location Vector
       mid_task_loc.push_back(std::vector<float>());
+      std::string pickup_loc = std::to_string(i);
       // Pushback Mid Task x,y
       mid_task_loc[i].push_back(-1);
       mid_task_loc[i].push_back(-1);
 
       // Get End Task Location
-      float end_x1 = mon_restaurant_config["Tableware_cleaning"]["x"];
-      float end_y1 = mon_restaurant_config["Tableware_cleaning"]["y"];
+      float end_x1 = mon_restaurant_config["Tableware_cleaning"][pickup_loc]["x"];
+      float end_y1 = mon_restaurant_config["Tableware_cleaning"][pickup_loc]["y"];
       // Pushback End Task Location Vector After Getting Individual Values
       end_task_loc.push_back(std::vector<float>());
       // Pushback End Task x,y
@@ -329,9 +334,10 @@ void CostCalculation::getTasks() {
 
       // Pushback End Task Location Vector After Getting Individual Values
       end_task_loc.push_back(std::vector<float>());
+      std::string pickup_loc = std::to_string(i);
       // Get End Task Location (Default Kitchen)
-      float end_x1 = mon_restaurant_config["Glassware_cleaning"]["x"];
-      float end_y1 = mon_restaurant_config["Glassware_cleaning"]["y"];
+      float end_x1 = mon_restaurant_config["Glassware_cleaning"][pickup_loc]["x"];
+      float end_y1 = mon_restaurant_config["Glassware_cleaning"][pickup_loc]["y"];
       // Pushback End Task x,y
       end_task_loc[i].push_back(end_x1);
       end_task_loc[i].push_back(end_y1);

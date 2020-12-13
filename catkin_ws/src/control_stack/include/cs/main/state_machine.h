@@ -57,6 +57,7 @@
 #include "cs/util/json.h"
 
 #include <control_stack/RobotPosition.h>
+#include <control_stack/RobotDatabase.h>
 #include <control_stack/RobotGoal.h>
 #include <geometry_msgs/Twist.h>
 
@@ -177,8 +178,10 @@ class StateMachine {
   ControllerList controller_list_;
   std::string pub_sub_prefix_;
   int robot_index_;
-  // int old_order_number_ = 0;
   int order_number_ = 0;
+  ros::Subscriber robot_database_subscriber_;
+  control_stack::RobotDatabase robot_database_;
+
   // ===========================================================================
 
   cs::state_estimation::StateEstimator* MakeStateEstimator(ros::NodeHandle* n) {
@@ -309,12 +312,38 @@ class StateMachine {
                          motion_planner_,
                          cs::controllers::ControllerType::NAVIGATION),
         pub_sub_prefix_(pub_sub_prefix),
-        robot_index_(robot_index) {}
+        robot_index_(robot_index) {
+          robot_database_subscriber_ = n->subscribe("/robot_database",
+                                                    1,
+                                                    &StateMachine::StateRobotDatabaseCallback,
+                                                    this);
+        }
 
   Eigen::Affine2f GetLaserOffset() {
     Eigen::Affine2f a = Eigen::Affine2f::Identity();
     a.translate(params::CONFIG_laser_offset);
     return a;
+  }
+
+  void StateRobotDatabaseCallback(control_stack::RobotDatabase msg) {
+    robot_database_ = msg;
+  }
+
+  bool isOtherRobotNear() {
+    geometry_msgs::Twist current_pose = robot_database_.robot_data[robot_index_].robot_position;
+    for(control_stack::RobotPosition other_robot: robot_database_.robot_data) {
+      if (robot_index_ == (int)other_robot.robot_index) {
+        continue;
+      }
+      if((robot_index_ < (int)other_robot.robot_index) && other_robot.robot_active) {
+        float distance_squared = pow((current_pose.linear.x - other_robot.robot_position.linear.x),2) +
+            pow((current_pose.linear.y - other_robot.robot_position.linear.y),2);
+        if (distance_squared < 0.44) {
+          return true;
+        }
+      }
+    } 
+    return false;
   }
 
   void RemoveDeadzones(util::LaserScan* laser) {
@@ -392,7 +421,14 @@ class StateMachine {
 
     obstacle_detector_.UpdateObservation(
         est_pose, laser_, &(dpw_->detected_walls_pub_));
-    const util::Twist command = controller_list_.Execute();     // CONTROLLER EXEC 
+
+    util::Twist command;
+    if (isOtherRobotNear()) {
+      ROS_INFO("Robot stopping to give way");
+      command = util::Twist();
+    } else {
+      command = controller_list_.Execute();     // CONTROLLER EXEC 
+    }
     
     control_stack::RobotPosition msg;
     msg.stamp = ros::Time::now();
@@ -404,6 +440,8 @@ class StateMachine {
       ROS_DEBUG("Order num: %i complete", msg.order_number);
     }
     dpw_ ->position_with_index_pub_.publish(msg);
+
+    
 
     state_estimator_->UpdateLastCommand(command);
     PublishTransforms();

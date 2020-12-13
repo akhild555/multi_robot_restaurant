@@ -130,40 +130,42 @@ int main(int argc, char **argv)
         robot_assgn.robot_goal.push_back(t);
 
         // Staging Location Code
+        if (stagger){ 
         //find closest wait location
-        int min_dist = 1000;
-        int wait_ind = 0;
-        for (int j = 0; j < wait_loc.size(); j++) {
-          //Reset wait_occ and rob_occ if the robot is being allocated a task
-          if (wait_occ[j] != 0){
-            if (rob_occ[j] == robot_assgn.robot_index){
-              wait_occ[j] = 0;
-              rob_occ[j] = 0;
+
+          int min_dist = 1000;
+          int wait_ind = 0;
+          for (int j = 0; j < wait_loc.size(); j++) {
+            //Reset wait_occ and rob_occ if the robot is being allocated a task
+            if (wait_occ[j] != 0){
+              if (rob_occ[j] == robot_assgn.robot_index){
+                wait_occ[j] = 0;
+                rob_occ[j] = 0;
+              }
+            }
+
+            if (wait_occ[j] == 0){
+              int wait_dist = (int)(pow(t.linear.x - wait_loc[j][0], 2) +
+                                pow(t.linear.y - wait_loc[j][1], 2));
+
+              if (wait_dist < min_dist){
+                min_dist = wait_dist;
+                wait_ind = j;
+              }
             }
           }
-
-          if (wait_occ[j] == 0){
-            int wait_dist = (int)(pow(t.linear.x - wait_loc[j][0], 2) +
-                               pow(t.linear.y - wait_loc[j][1], 2));
-
-            if (wait_dist < min_dist){
-              min_dist = wait_dist;
-              wait_ind = j;
-            }
-          }
+        
+          t.linear.x = wait_loc[wait_ind][0];
+          t.linear.y = wait_loc[wait_ind][1];
+          wait_occ[wait_ind] = 1;
+          rob_occ[wait_ind] = robot_assgn.robot_index;
+          // for (int k = 0; k < wait_occ.size(); k++) {
+          //   // std::cout<<"Wait occ : " << wait_occ[k];
+          //   // std::cout<<"   Robot occ : " << rob_occ[k] << std::endl;
+          // }
+          // Pushback Wait Location
+          robot_assgn.robot_goal.push_back(t);
         }
-        t.linear.x = wait_loc[wait_ind][0];
-        t.linear.y = wait_loc[wait_ind][1];
-        wait_occ[wait_ind] = 1;
-        rob_occ[wait_ind] = robot_assgn.robot_index;
-        // for (int k = 0; k < wait_occ.size(); k++) {
-        //   // std::cout<<"Wait occ : " << wait_occ[k];
-        //   // std::cout<<"   Robot occ : " << rob_occ[k] << std::endl;
-        // }
-        // Pushback Wait Location
-        robot_assgn.robot_goal.push_back(t);
-
-
 
         // Add Time Stamp
         robot_assgn.stamp = ros::Time::now();

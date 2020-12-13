@@ -151,6 +151,65 @@ std::pair<ControllerType, util::Twist> EscapeCollisionController::Execute() {
   return {ControllerType::ESCAPE_COLLISION, command};
 }
 
+std::pair<ControllerType, util::Twist> EscapeCollisionController::ExecutePatron() {
+  static constexpr bool kDebug = false;
+  const auto est_pose = state_estimator_.GetEstimatedPose();
+  auto laser_points_wf = laser_.TransformPointsFrameSparse(
+      est_pose.ToAffine(), [this](const float& d) {
+        return (d > laser_.ros_laser_scan_.range_min) &&
+               (d <= laser_.ros_laser_scan_.range_max);
+      });
+
+  // Ensure that the prior colliding point is not forgotten to prevent
+  // flip-flopping.
+  if (escape_waypoint_.initialized) {
+    laser_points_wf.push_back(escape_waypoint_.colliding_point);
+  }
+
+  auto current_escape_waypoint =
+      ComputeEscapeWaypoint(est_pose.tra, laser_points_wf);
+  if (!current_escape_waypoint.initialized) {
+    if (!escape_waypoint_.initialized) {
+      if (kDebug) {
+        ROS_INFO("No escape waypoint found, transitioning to nav");
+      }
+      return {ControllerType::NAVIGATION, {}};
+    }
+    current_escape_waypoint = escape_waypoint_;
+  }
+
+  colliding_marker_ =
+      visualization::PointToSphere(current_escape_waypoint.colliding_point,
+                                   params::CONFIG_map_tf_frame,
+                                   "colliding_point",
+                                   0,
+                                   0,
+                                   1);
+  dpw_->colliding_point_pub_.publish(colliding_marker_);
+  waypoint_marker_ =
+      visualization::PointToSphere(current_escape_waypoint.waypoint,
+                                   params::CONFIG_map_tf_frame,
+                                   "waypoint",
+                                   0,
+                                   0,
+                                   0);
+  dpw_->colliding_point_pub_.publish(waypoint_marker_);
+
+  if (motion_planner_.AtPoint(current_escape_waypoint.waypoint)) {
+    if (kDebug) {
+      ROS_INFO("At escape waypoint, transitioning to nav");
+    }
+    return {ControllerType::NAVIGATION, {}};
+  }
+
+  const util::Pose desired_pose(current_escape_waypoint.waypoint, est_pose.rot);
+  DrawWaypoint(dpw_, desired_pose);
+  const util::Twist command = motion_planner_.EscapeCollision(desired_pose);
+  escape_waypoint_ = current_escape_waypoint;
+
+  return {ControllerType::ESCAPE_COLLISION, command};
+}
+
 void EscapeCollisionController::Reset() {
   escape_waypoint_ = {};
   colliding_marker_.action = colliding_marker_.DELETE;

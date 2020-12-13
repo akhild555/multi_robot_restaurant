@@ -1,4 +1,4 @@
 time stamp
-uint32 patron_index
-geometry_msgs/Twist robot_position
+int32 patron_index
+geometry_msgs/Twist patron_position
 bool patron_active

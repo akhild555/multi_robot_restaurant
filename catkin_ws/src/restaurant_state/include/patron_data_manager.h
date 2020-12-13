@@ -20,11 +20,11 @@ class PatronDataManager {
   void patronsPositionCallback(const control_stack::PatronPosition& msg) {
 
     int index = msg.patron_index;
-    if(index >= number_of_patrons || index < 0) {
+    if(index >= number_of_patrons+4 || index < 0) {
       ROS_ERROR("Recieved invalid index from /robot_position topic");
       return;
     }
-    patron_database.patron_data[index] = msg;
+    patron_database.patron_data[index-4] = msg;
     publishPatronDatabase();
   }
 
@@ -47,7 +47,7 @@ public:
     number_of_patrons = num;
     
     // initialize database 
-    for(int i=0; i<number_of_patrons; i++) {
+    for(int i=4; i<number_of_patrons + 4; i++) {
       control_stack::PatronPosition patron_data;
       patron_data.stamp = ros::Time(0);
       patron_data.patron_index = i;

@@ -57,7 +57,11 @@
 #include "cs/util/json.h"
 
 #include <control_stack/RobotPosition.h>
+#include <control_stack/RobotDatabase.h>
 #include <control_stack/RobotGoal.h>
+#include <control_stack/PatronPosition.h>
+#include <control_stack/PatronDatabase.h>
+#include <control_stack/PatronGoal.h>
 #include <geometry_msgs/Twist.h>
 
 using json = nlohmann::json;
@@ -132,8 +136,19 @@ struct ControllerList {
     controller_array[current_controller_]->UpdateGoal(goal_list);
   }
 
+  void UpdatePatronGoal(std::vector<util::Pose> patron_goal_list) {
+    if (current_controller_ != cs::controllers::ControllerType::NAVIGATION) {
+      return;
+    }
+    controller_array[current_controller_]->UpdatePatronGoal(patron_goal_list);
+  }
+
   bool isRobotActive() {
     return controller_array[current_controller_]->isRobotActive();
+  }
+
+  bool isPatronActive() {
+    return controller_array[current_controller_]->isPatronActive();
   }
 
   bool Completed_Order(){
@@ -150,6 +165,26 @@ struct ControllerList {
       }
       const auto execute_result =
           controller_array[current_controller_]->Execute();  //SKIP EXECUTION IF NO GOAL
+      if (execute_result.first == current_controller_) {
+        return execute_result.second;
+      }
+      Reset();
+      current_controller_ = execute_result.first;
+    }
+    ROS_ERROR("Controller exceeded max transitions!");
+    return {};
+  }
+
+  util::Twist ExecutePatron() {
+    static constexpr bool kDebug = false;
+    for (int num_transitions = 0; num_transitions < 8; ++num_transitions) {
+      NP_NOT_NULL(controller_array[current_controller_]);
+      if (kDebug) {
+        ROS_INFO("Controller: %s",
+                 cs::controllers::to_string(current_controller_).c_str());
+      }
+      const auto execute_result =
+          controller_array[current_controller_]->ExecutePatron();  //SKIP EXECUTION IF NO GOAL
       if (execute_result.first == current_controller_) {
         return execute_result.second;
       }
@@ -177,8 +212,12 @@ class StateMachine {
   ControllerList controller_list_;
   std::string pub_sub_prefix_;
   int robot_index_;
+  int patron_index_;
   // int old_order_number_ = 0;
   int order_number_ = 0;
+  ros::Subscriber robot_database_subscriber_;
+  control_stack::RobotDatabase robot_database_;
+
   // ===========================================================================
 
   cs::state_estimation::StateEstimator* MakeStateEstimator(ros::NodeHandle* n) {
@@ -294,7 +333,8 @@ class StateMachine {
   StateMachine(cs::main::DebugPubWrapper* dpw,
                ros::NodeHandle* n,
                const std::string& pub_sub_prefix,
-               int robot_index)
+               int robot_index,
+               int patron_index)
       : dpw_(dpw),
         map_(params::CONFIG_map),
         state_estimator_(MakeStateEstimator(n)),
@@ -309,12 +349,34 @@ class StateMachine {
                          motion_planner_,
                          cs::controllers::ControllerType::NAVIGATION),
         pub_sub_prefix_(pub_sub_prefix),
-        robot_index_(robot_index) {}
+        robot_index_(robot_index),
+        patron_index_(patron_index) {}
 
   Eigen::Affine2f GetLaserOffset() {
     Eigen::Affine2f a = Eigen::Affine2f::Identity();
     a.translate(params::CONFIG_laser_offset);
     return a;
+  }
+
+  void StateRobotDatabaseCallback(control_stack::RobotDatabase msg) {
+    robot_database_ = msg;
+  }
+
+  bool isOtherRobotNear() {
+    geometry_msgs::Twist current_pose = robot_database_.robot_data[robot_index_].robot_position;
+    for(control_stack::RobotPosition other_robot: robot_database_.robot_data) {
+      if (robot_index_ == (int)other_robot.robot_index) {
+        continue;
+      }
+      if((robot_index_ < (int)other_robot.robot_index) && other_robot.robot_active) {
+        float distance_squared = pow((current_pose.linear.x - other_robot.robot_position.linear.x),2) +
+            pow((current_pose.linear.y - other_robot.robot_position.linear.y),2);
+        if (distance_squared < 0.44) {
+          return true;
+        }
+      }
+    } 
+    return false;
   }
 
   void RemoveDeadzones(util::LaserScan* laser) {
@@ -355,6 +417,22 @@ class StateMachine {
     controller_list_.UpdateGoal(goal_list);
 
   }
+
+  // Get Patron Goals
+  void UpdatePatronGoal(const control_stack::PatronGoal& msg) {
+    if (msg.patron_index != patron_index_) {
+      return;
+    }
+    // ROS_DEBUG("Received order: %d with size %d", msg.order_number, (int)msg.robot_goal.size());
+    std::vector<util::Pose> patron_goal_list;
+    for (geometry_msgs::Twist goal: msg.patron_goal) {
+      patron_goal_list.push_back(util::Pose(goal));
+    }
+    // order_number_ = msg.order_number;
+    // update goal
+    controller_list_.UpdatePatronGoal(patron_goal_list);
+
+  }
   
   void AddTextCaller(json text_config_file){
     std::vector<float> kitchen_pos = {text_config_file["Kitchen"]["x"],text_config_file["Kitchen"]["y"]};
@@ -392,7 +470,14 @@ class StateMachine {
 
     obstacle_detector_.UpdateObservation(
         est_pose, laser_, &(dpw_->detected_walls_pub_));
-    const util::Twist command = controller_list_.Execute();     // CONTROLLER EXEC 
+
+    util::Twist command;
+    if (isOtherRobotNear()) {
+      ROS_INFO("Robot stopping to give way");
+      command = util::Twist();
+    } else {
+      command = controller_list_.Execute();     // CONTROLLER EXEC 
+    }
     
     control_stack::RobotPosition msg;
     msg.stamp = ros::Time::now();
@@ -404,6 +489,41 @@ class StateMachine {
       ROS_DEBUG("Order num: %i complete", msg.order_number);
     }
     dpw_ ->position_with_index_pub_.publish(msg);
+
+    
+
+    state_estimator_->UpdateLastCommand(command);
+    PublishTransforms();
+    state_estimator_->Visualize(&(dpw_->particle_pub_));
+    dpw_->map_pub_.publish(
+        visualization::DrawWalls(map_.lines, "map", "map_ns"));
+    DrawRobot(map_, command);
+
+    json text_config_file;
+    std::ifstream text_config_data("src/control_stack/config/table_config.json");
+    text_config_data>>text_config_file;
+    // call json file and extract data from it
+    AddTextCaller(text_config_file);
+    return command_scaler_->ScaleCommand(command);
+  }
+
+  util::Twist ExecutePatronController() {
+    const auto est_pose = state_estimator_->GetEstimatedPose();
+    dpw_->position_pub_.publish(est_pose.ToTwist());
+
+    obstacle_detector_.UpdateObservation(
+        est_pose, laser_, &(dpw_->detected_walls_pub_));
+    const util::Twist command = controller_list_.ExecutePatron();     // CONTROLLER EXEC 
+    
+    control_stack::PatronPosition msg;
+    msg.stamp = ros::Time::now();
+    msg.patron_index = patron_index_;
+    msg.patron_position = est_pose.ToTwist();
+    msg.patron_active =  controller_list_.isPatronActive();
+    // if (!msg.robot_active) {
+    //   ROS_DEBUG("Order num: %i complete", msg.order_number);
+    // }
+    dpw_ ->position_with_index_pub_patron_.publish(msg);
 
     state_estimator_->UpdateLastCommand(command);
     PublishTransforms();

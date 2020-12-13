@@ -65,9 +65,9 @@ find_package(Ceres REQUIRED)
    RobotDatabase.msg
    RobotGoal.msg
    KitchenOrders.msg
-   PatronGoal.msg
    PatronPosition.msg
    PatronDatabase.msg
+   PatronGoal.msg
  )
 
  generate_messages(DEPENDENCIES 
@@ -207,6 +207,12 @@ add_executable(nav_node src/main/nav_node.cpp
         src/controllers/nav_controller.cpp
         )
 target_link_libraries(nav_node util_lib nav_lib lua5.1 amrl_shared_lib ${catkin_LIBRARIES})
+
+add_executable(patron_nav_node src/main/patron_nav_node.cpp
+        src/controllers/escape_collision_controller.cpp
+        src/controllers/nav_controller.cpp
+        )
+target_link_libraries(patron_nav_node util_lib nav_lib lua5.1 amrl_shared_lib ${catkin_LIBRARIES})
 
 ADD_EXECUTABLE(control_stack_unit_tests
         test/physics/physics_tests.cpp)

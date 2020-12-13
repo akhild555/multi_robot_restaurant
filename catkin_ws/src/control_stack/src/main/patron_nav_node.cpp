@@ -35,15 +35,15 @@ CONFIG_STRING(map, "pf.map");
 
 int main(int argc, char** argv) {
   std::string config_file = "src/control_stack/config/nav_config.lua";
-  int robot_index = -1;
+  int patron_index = -1;
   if (argc >= 2) {
     config_file = argv[1];
   }
   if (argc >= 3) {
-    robot_index = std::stoi(argv[2]);
+    patron_index = std::stoi(argv[2]);
   }
   const std::string pub_sub_prefix_no_slash =
-      (robot_index >= 0) ? "robot" + std::to_string(robot_index) : "";
+      (patron_index >= 0) ? "robot" + std::to_string(patron_index) : "";
   const std::string pub_sub_prefix = "/" + pub_sub_prefix_no_slash;
 
   ROS_INFO("Using config file: %s", config_file.c_str());
@@ -54,21 +54,21 @@ int main(int argc, char** argv) {
   ros::NodeHandle n;
 
   cs::main::DebugPubWrapper dpw(&n, pub_sub_prefix);
-  cs::main::StateMachine state_machine(&dpw, &n, pub_sub_prefix, robot_index, 10);
+  cs::main::StateMachine state_machine_patron(&dpw, &n, pub_sub_prefix, 10, patron_index);
 
   ros::Subscriber laser_sub =
       n.subscribe(pub_sub_prefix + constants::kLaserTopic,
                   1,
                   &cs::main::StateMachine::UpdateLaser,
-                  &state_machine);
+                  &state_machine_patron);
   ros::Subscriber odom_sub = n.subscribe(pub_sub_prefix + constants::kOdomTopic,
                                          1,
                                          &cs::main::StateMachine::UpdateOdom,
-                                         &state_machine);
-  ros::Subscriber goal_sub = n.subscribe("/robot_goal", 
+                                         &state_machine_patron);
+  ros::Subscriber goal_sub = n.subscribe("/patron_goal", 
                                         3,
-                                        &cs::main::StateMachine::UpdateGoal,
-                                        &state_machine);
+                                        &cs::main::StateMachine::UpdatePatronGoal,
+                                        &state_machine_patron);
                                         
   ros::Publisher command_pub = n.advertise<geometry_msgs::Twist>(
       pub_sub_prefix + constants::kCommandVelocityTopic, 1);
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
   RateLoop rate(40.0);
   while (ros::ok()) {
     ros::spinOnce();
-    command_pub.publish(state_machine.ExecuteController().ToTwist());
+    command_pub.publish(state_machine_patron.ExecutePatronController().ToTwist());
     rate.Sleep();
   }
   return 0;

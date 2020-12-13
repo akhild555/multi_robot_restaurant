@@ -65,12 +65,15 @@ class EscapeCollisionController : public Controller {
   ~EscapeCollisionController() = default;
 
   std::pair<ControllerType, util::Twist> Execute() override;
+  std::pair<ControllerType, util::Twist> ExecutePatron() override;
 
   void Reset() override;
 
   void UpdateGoal(std::vector<util::Pose>) override{};
+  void UpdatePatronGoal(std::vector<util::Pose>) override{};
 
   bool isRobotActive() override {return true;};
+  bool isPatronActive() override {return true;};
 
   bool Completed_Order() override {return true;};
 };

@@ -44,7 +44,10 @@ class PatronManager {
     }
 
     void OrderExpireCallback(const control_stack::OrderExpire& msg){
-        removeExpiredOrder(msg);
+        
+        if (all_orders.size() > 0){
+            removeExpiredOrder(msg);
+        }
         
         // tell patron to leave restaurant
         for (int i = 0; i < patron_statuses.size(); i++) {

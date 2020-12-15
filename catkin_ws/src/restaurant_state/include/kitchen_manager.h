@@ -227,7 +227,7 @@ class KitchenManager {
   void storeOrderStatus()  {
     // customer meal time generator
     std::default_random_engine generator_meal(time(0));
-    std::normal_distribution<double> distribution_meal(10.0,1.0);
+    std::normal_distribution<double> distribution_meal(300.0,45.0);
     
     // table cleanup time generator
     std::default_random_engine generator_clean(time(0));

@@ -18,6 +18,7 @@ struct Patron_Status {
   int table_number = 0;
   ros::Time arrival_time = ros::Time::now() + ros::Duration(24*60*60);
   float duration = 0.0;
+  bool task_assigned = false;
   bool patron_active = false;
 };
 
@@ -57,6 +58,59 @@ class PatronManager {
             }
         }
     }
+
+    void patronGoalCallback(const control_stack::PatronDatabase& msg){
+        for (int i = 0; i < patron_statuses.size(); i++) {
+            int time_passed = ros::Time::now().sec - patron_statuses[i].arrival_time.sec;
+            if (time_passed > patron_statuses[i].duration / 2 && !patron_statuses[i].task_assigned){
+                patronDoTask(i);
+                patron_statuses[i].task_assigned = true;
+            }
+        }
+    }
+
+    void patronDoTask(int patron_id) {
+        float x = 0.0;
+        float y = 0.0;
+        patron_assgn.stamp = ros::Time::now();
+        patron_assgn.patron_index = patron_id + number_of_patrons;
+        // patron_assgn.table_number = patron_statuses[patron_id].table_number;
+
+        // send patron to bathroom or bar
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> distr(0, 2);
+        int goal = distr(gen);
+        ROS_ERROR("patron goal generated: %d", goal);
+
+        if (goal == 0){
+            x = mon_restaurant_config["Bathroom"]["Female"]["x"];
+            y = mon_restaurant_config["Bathroom"]["Female"]["y"];
+        }
+        else if (goal == 1){
+            x = mon_restaurant_config["Bathroom"]["Male"]["x"];
+            y = mon_restaurant_config["Bathroom"]["Male"]["y"];
+        }
+        else if (goal == 2){
+            x = mon_restaurant_config["Drinks_bar"]["patron"]["x"];
+            y = mon_restaurant_config["Drinks_bar"]["patron"]["y"];
+        }
+
+        t.linear.x = x;
+        t.linear.y = y;
+        patron_assgn.patron_goal.push_back(t);
+
+        // send patron back to their table
+        std::string table_number = "Table_" + std::to_string(patron_statuses[patron_id].table_number);
+        x = mon_restaurant_config[table_number]["patron"]["x"];
+        y = mon_restaurant_config[table_number]["patron"]["y"];
+        t.linear.x = x;
+        t.linear.y = y;
+        patron_assgn.patron_goal.push_back(t);
+
+        patron_assignment.publish(patron_assgn);
+        patron_assgn.patron_goal.clear();
+    } 
 
     void removeExpiredOrder(const control_stack::OrderExpire& msg){
         ROS_INFO("all_orders size before: %zu", all_orders.size());
@@ -99,6 +153,7 @@ class PatronManager {
         patron_statuses[patron_id].table_number = table_num;
         patron_statuses[patron_id].arrival_time = ros::Time::now();
         patron_statuses[patron_id].duration = duration;
+        patron_statuses[patron_id].task_assigned = false;
         patron_statuses[patron_id].patron_active = true;
 
         patronGoToTable(patron_id);
@@ -162,8 +217,8 @@ public:
 
         patron_assignment = nh.advertise<control_stack::PatronGoal>("/patron_goal", 1000);
         
-        // patron_status_subscriber = nh.subscribe("/patron_database",
-        //         1, &PatronManager::PatronStatusCallback, this);
+        patron_status_subscriber = nh.subscribe("/patron_database",
+                1, &PatronManager::patronGoalCallback, this);
 
         order_info_subscriber = nh.subscribe("/order_info",
                 100, &PatronManager::OrderInfoCallback, this);

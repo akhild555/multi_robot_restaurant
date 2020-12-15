@@ -68,6 +68,8 @@ find_package(Ceres REQUIRED)
    PatronPosition.msg
    PatronDatabase.msg
    PatronGoal.msg
+   OrderInfo.msg
+   OrderExpire.msg
  )
 
  generate_messages(DEPENDENCIES 

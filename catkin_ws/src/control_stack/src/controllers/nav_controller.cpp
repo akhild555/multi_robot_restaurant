@@ -177,10 +177,10 @@ void NavController::RefreshPatronGoal() {
   if (current_goal_reached_) {
     ROS_DEBUG("Reached curr goal: %f, %f", current_goal_.tra.x(), current_goal_.tra.y());
     // reached current goal
-    if (current_goal_index_ + 1 < goal_list_.size()) {
+    if (current_goal_index_ + 1 < patron_goal_list_.size()) {
       // new goal exists
       ++current_goal_index_;
-      current_goal_ = goal_list_[current_goal_index_];
+      current_goal_ = patron_goal_list_[current_goal_index_];
       ROS_INFO("New Goal: %f , %f, %f PATRON ACTIVE", current_goal_.tra.x(), current_goal_.tra.y(), current_goal_.rot);
       patron_active_ = true;
       current_goal_reached_ = false;

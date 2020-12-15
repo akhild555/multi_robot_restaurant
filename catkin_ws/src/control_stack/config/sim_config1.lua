@@ -42,8 +42,8 @@ pf = {
   -- goal_poses = {{14, 14, 0}};
 
   map = "../catkin_ws/src/control_stack/maps/monarch.map";
-  start_pose = {12, 0.73, 0};
-  goal_poses = {{12, 0.73, 0}};
+  start_pose = {13.77, 2.23, 0};
+  goal_poses = {{13.77, 2.23, 0}};
   
 --   map = "src/control_stack/maps/outside_grasp.map";
 --   start_pose = {-2.5, -1, 0};

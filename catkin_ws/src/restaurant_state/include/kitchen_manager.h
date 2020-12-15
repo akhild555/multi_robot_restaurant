@@ -4,6 +4,8 @@
 #include "std_msgs/String.h"
 #include "control_stack/KitchenOrders.h"
 #include "control_stack/RobotDatabase.h"
+#include "control_stack/OrderInfo.h"
+#include "control_stack/OrderExpire.h"
 #include <random>
 #include <numeric>
 #include <string>
@@ -32,8 +34,12 @@ class KitchenManager {
 
   ros::Subscriber robot_status_subscriber;
   ros::Publisher order_publisher;
+  ros::Publisher order_info_publisher;
+  ros::Publisher order_expire_publisher;
 
   control_stack::KitchenOrders order;
+  control_stack::OrderInfo order_info;
+  control_stack::OrderExpire order_expire;
   Table_Status new_table;
   std::vector<Table_Status> table_statuses;
   std::vector<Order_Status> order_statuses;
@@ -69,6 +75,7 @@ class KitchenManager {
           {
             // clean up table
             ROS_DEBUG("Table %d is vacant", order_statuses[i].table_number);
+            orderExpired(i);
             createCleanOrder(i, order_statuses[i].table_number);
             int tb = order_statuses[i].table_number - 1;
             table_statuses[tb].occupied = false;
@@ -99,6 +106,17 @@ class KitchenManager {
       if (!one_order_only) {
         randOrderGenerator();
       }
+  }
+
+  void orderExpired(int order_ind){
+    order_expire.stamp = ros::Time::now();
+    order_expire.order_number = order_statuses[order_ind].order_number;
+    order_expire.table_number = order_statuses[order_ind].table_number;
+    publishOrderExpired();    
+  }
+
+  void publishOrderExpired(){
+    order_expire_publisher.publish(order_expire);
   }
 
   void createCleanOrder(int order_idx, int table_num){
@@ -183,8 +201,8 @@ class KitchenManager {
       }
 
       // std::cout << "Generated Table number = " << gen_table_num << std::endl;
-      orderFood();
       orderDrinks();
+      orderFood();
       createMealOrder(gen_table_num);
     }
   }
@@ -194,6 +212,9 @@ class KitchenManager {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(0, 1);
     food_order = distr(gen);
+    if (food_order == false && drinks_order == false)    {
+      food_order = true;
+    }
   }
 
   void orderDrinks() {
@@ -201,18 +222,15 @@ class KitchenManager {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(0, 1);
     drinks_order = distr(gen);
-    if (food_order == false && drinks_order == false)    {
-      drinks_order = true;
-    }
   }
 
   void storeOrderStatus()  {
     // customer meal time generator
-    std::default_random_engine generator_meal;
-    std::normal_distribution<double> distribution_meal(300.0,30.0);
+    std::default_random_engine generator_meal(time(0));
+    std::normal_distribution<double> distribution_meal(10.0,1.0);
     
     // table cleanup time generator
-    std::default_random_engine generator_clean;
+    std::default_random_engine generator_clean(time(0));
     std::normal_distribution<double> distribution_clean(20.0,4.0);
 
     Order_Status current_order;
@@ -224,7 +242,7 @@ class KitchenManager {
       current_order.order_type = "cleanup";
     }   
     else {
-      current_order.customer_max_time =  distribution_meal(generator_meal);  
+      current_order.customer_max_time =  distribution_meal(generator_meal); 
       current_order.order_type = "meal";
     }
     order_statuses.push_back(current_order);
@@ -249,11 +267,24 @@ class KitchenManager {
     storeTableStatus(table_num);
     storeOrderStatus();
     publishKitchenOrders();
+
+    order_info.stamp = ros::Time::now();
+    order_info.order_number = counter;
+    order_info.table_number = table_num;
+    // ROS_INFO("customer max time = %f", order_statuses[-1].customer_max_time);
+    order_info.order_duration = order_statuses.back().customer_max_time;
+    publishOrderInfo();
   }
+  
   
   void publishKitchenOrders()   {
     order_publisher.publish(order);
     ROS_INFO("Published order %i", order.order_number);
+  }
+
+  void publishOrderInfo()   {
+    order_info_publisher.publish(order_info);
+    ROS_INFO("Published order_info %i", order.order_number);
   }
 
   
@@ -276,6 +307,10 @@ public:
 
     order_publisher = nh.advertise<control_stack::KitchenOrders>("/kitchen_state", 100);
     ROS_INFO("Kitchen manager ready");
+
+
+    order_info_publisher = nh.advertise<control_stack::OrderInfo>("/order_info", 100);
+    order_expire_publisher = nh.advertise<control_stack::OrderExpire>("/order_expire", 100);
 
     robot_status_subscriber = nh.subscribe("/robot_database",
           1, &KitchenManager::RobotStatusCallback, this);

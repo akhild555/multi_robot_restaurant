@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
   ros::NodeHandle n;
 
   cs::main::DebugPubWrapper dpw(&n, pub_sub_prefix);
-  cs::main::StateMachine state_machine(&dpw, &n, pub_sub_prefix, robot_index, 10);
+  cs::main::StateMachine state_machine(&dpw, &n, pub_sub_prefix, robot_index, robot_index);
 
   ros::Subscriber laser_sub =
       n.subscribe(pub_sub_prefix + constants::kLaserTopic,

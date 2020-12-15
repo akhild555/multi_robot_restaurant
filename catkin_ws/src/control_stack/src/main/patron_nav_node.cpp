@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
   ros::NodeHandle n;
 
   cs::main::DebugPubWrapper dpw(&n, pub_sub_prefix);
-  cs::main::StateMachine state_machine_patron(&dpw, &n, pub_sub_prefix, 10, patron_index);
+  cs::main::StateMachine state_machine_patron(&dpw, &n, pub_sub_prefix, patron_index, patron_index);
 
   ros::Subscriber laser_sub =
       n.subscribe(pub_sub_prefix + constants::kLaserTopic,
@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
                                          &cs::main::StateMachine::UpdateOdom,
                                          &state_machine_patron);
   ros::Subscriber goal_sub = n.subscribe("/patron_goal", 
-                                        3,
+                                        4,
                                         &cs::main::StateMachine::UpdatePatronGoal,
                                         &state_machine_patron);
                                         

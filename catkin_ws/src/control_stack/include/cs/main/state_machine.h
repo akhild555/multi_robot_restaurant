@@ -420,9 +420,11 @@ class StateMachine {
 
   // Get Patron Goals
   void UpdatePatronGoal(const control_stack::PatronGoal& msg) {
+    
     if (msg.patron_index != patron_index_) {
       return;
     }
+
     // ROS_DEBUG("Received order: %d with size %d", msg.order_number, (int)msg.robot_goal.size());
     std::vector<util::Pose> patron_goal_list;
     for (geometry_msgs::Twist goal: msg.patron_goal) {
@@ -519,7 +521,8 @@ class StateMachine {
     msg.stamp = ros::Time::now();
     msg.patron_index = patron_index_;
     msg.patron_position = est_pose.ToTwist();
-    msg.patron_active =  controller_list_.isPatronActive();
+    // msg.patron_active =  controller_list_.isPatronActive();
+    
     // if (!msg.robot_active) {
     //   ROS_DEBUG("Order num: %i complete", msg.order_number);
     // }

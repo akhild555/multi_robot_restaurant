@@ -22,7 +22,7 @@ int main(int argc, char **argv)
   KitchenManager kitchen_manager(nh, number_of_tables);
   RobotDataManager data_manager(nh, number_of_robots);
   PatronDataManager patron_data_manager(nh, number_of_patrons);
-  PatronManager patron_goal_manager(nh);
+  PatronManager patron_goal_manager(nh, number_of_patrons);
   DataLogger data_logger(nh);
   tableVisualize table_visualizer(nh, number_of_robots);
   

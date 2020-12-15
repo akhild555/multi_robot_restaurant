@@ -42,8 +42,8 @@ pf = {
   -- goal_poses = {{14, 14, 0}};
 
   map = "../catkin_ws/src/control_stack/maps/monarch.map";
-  start_pose = {10.98, -0.61, 0};
-  goal_poses = {{10.98, -0.61, 0}};
+  start_pose = {11.44, -0.61, 0};
+  goal_poses = {{11.44, -0.61, 0}};
   
 --   map = "src/control_stack/maps/outside_grasp.map";
 --   start_pose = {-2.5, -1, 0};
@@ -56,7 +56,7 @@ pf = {
   kRobotRadius = 0.1;
   kSafetyMargin = 0.2;
   kCollisionRollout = 3;
-  color = {0.0, 0.0, 1.0, 1.0};
+  color = {0.0, 0.0, 0.0, 1.0};
 };
 
 frames = {

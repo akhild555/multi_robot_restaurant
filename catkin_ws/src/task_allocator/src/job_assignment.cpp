@@ -173,22 +173,22 @@ int main(int argc, char **argv)
         robot_assgn.order_number = cost_func.assigned_orders[i];
         std::stringstream ss;
         if(cost_func.order_types[i] == true){
-          ss<<"Order Type order"<< std::endl;
-          ROS_INFO("%s", ss.str().c_str());
+          std::cout<<"Order Type order"<< std::endl;
+          // ROS_INFO("%s", ss.str().c_str());
           robot_assgn.order = true;
         }
         else if(cost_func.order_types[i] == false){
-          ss<<"Order Type cleanup"<< std::endl;
-          ROS_INFO("%s", ss.str().c_str());
+          std::cout<<"Order Type cleanup"<< std::endl;
+          // ROS_INFO("%s", ss.str().c_str());
           robot_assgn.order = false;
         }
         std::cout << "Published order number = " << robot_assgn.order_number  << std::endl;
-        std::cout << cost_func.task_type[assignments[i]] << std::endl; // Publish Type of Task
+        std::cout << cost_func.task_type[assignments[i]] << std::endl<<std::endl; // Publish Type of Task
 
         cost_func.task_alloc_memory[robot_assgn.robot_index] = robot_assgn.order_number;
         // std::stringstream ss;
-        ss<<"Order "<<robot_assgn.order_number<<" Robot "<<robot_assgn.robot_index;
-        ROS_INFO("%s",ss.str().c_str());
+        // std::cout<<"Order "<<robot_assgn.order_number<<" Robot "<<robot_assgn.robot_index<<std::endl<<std::endl;
+        // ROS_INFO("%s",ss.str().c_str());
 
         // Publish Robot Goals
         job_assignment.publish(robot_assgn);

@@ -1,5 +1,5 @@
 #!/bin/sh
-
+roscore &
 rosbuild_ws/simulator/ut_multirobot_sim/bin/simulator --sim_config=rosbuild_ws/simulator/sim_config.lua &
 cd catkin_ws
 devel/lib/control_stack/nav_node src/control_stack/config/sim_config0.lua 0 &
@@ -12,9 +12,9 @@ devel/lib/control_stack/nav_node src/control_stack/config/sim_config3.lua 3 &
 # cd catkin_ws
 # devel/lib/control_stack/nav_node --src/control_stack/config/sim_config4.lua 4 &
 cd catkin_ws
-devel/lib/task_allocator/job_assignment &
-cd catkin_ws
 devel/lib/restaurant_state/environment_manager &
+# cd catkin_ws
+# devel/lib/task_allocator/job_assignment &
 cd ..
 rosrun rviz rviz -d rosbuild_ws/simulator/visualization.rviz &
 

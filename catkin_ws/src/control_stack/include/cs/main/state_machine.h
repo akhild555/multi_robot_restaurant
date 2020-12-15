@@ -391,27 +391,35 @@ class StateMachine {
     std::vector<float> hostess_pos = {text_config_file["Hostess"]["x"],text_config_file["Hostess"]["y"]};
     std::vector<float> glassware_cleaning_pos = {text_config_file["Glassware_cleaning"]["x"],text_config_file["Glassware_cleaning"]["y"]};
     std::vector<float> table_cleaning_pos = {text_config_file["Tableware_cleaning"]["x"],text_config_file["Tableware_cleaning"]["y"]};
+    std::vector<float> bathroom_male_pos = {text_config_file["Bathroom"]["Male"]["x"],text_config_file["Bathroom"]["Male"]["y"]};
+    std::vector<float> bathroom_female_pos = {text_config_file["Bathroom"]["Female"]["x"],text_config_file["Bathroom"]["Female"]["y"]};
 
     dpw_->loc_poi_text_pub_.publish(visualization::AddText(
-      kitchen_pos,0.5,0.5,params::CONFIG_map_tf_frame,"kitchen","Kitchen",0));
+      kitchen_pos,0.4,0.4,params::CONFIG_map_tf_frame,"kitchen","Kitchen",0));
     
     dpw_->loc_poi_text_pub_.publish(visualization::AddText(
-      drinks_bar_pos,0.5,0.5,params::CONFIG_map_tf_frame,"drinks_bar","Drinks Bar",0));
+      drinks_bar_pos,0.4,0.4,params::CONFIG_map_tf_frame,"drinks_bar","Drinks Bar",0));
     
     dpw_->loc_poi_text_pub_.publish(visualization::AddText(
-      hostess_pos,0.5,0.5,params::CONFIG_map_tf_frame,"hostess","Hostess",0));
+      hostess_pos,0.4,0.4,params::CONFIG_map_tf_frame,"hostess","Hostess",0));
     
     dpw_->loc_poi_text_pub_.publish(visualization::AddText(
-      glassware_cleaning_pos,0.5,0.5,params::CONFIG_map_tf_frame,"glassware_cleaning","Glassware Cleaning",0));
+      glassware_cleaning_pos,0.4,0.4,params::CONFIG_map_tf_frame,"glassware_cleaning","Glassware Cleaning",0));
     
     dpw_->loc_poi_text_pub_.publish(visualization::AddText(
-      table_cleaning_pos,0.5,0.5,params::CONFIG_map_tf_frame,"table_cleaning","Tableware Cleaning",0));
+      table_cleaning_pos,0.4,0.4,params::CONFIG_map_tf_frame,"table_cleaning","Tableware Cleaning",0));
+
+    dpw_->loc_poi_text_pub_.publish(visualization::AddText(
+      bathroom_male_pos,0.4,0.4,params::CONFIG_map_tf_frame,"bathroom_male","Bathroom - Male",0));
+    
+    dpw_->loc_poi_text_pub_.publish(visualization::AddText(
+      bathroom_female_pos,0.4,0.4,params::CONFIG_map_tf_frame,"bathroom_female","Bathroom - Female",0));
 
     //publishing for each table
     for(int i=1;i<=17;i++){
       std::vector<float> table_pos = {text_config_file["Table_"+std::to_string(i)]["x"],text_config_file["Table_"+std::to_string(i)]["y"]};
       dpw_->loc_tables_text_pub_.publish(visualization::AddText(
-        table_pos,0.5,0.5,params::CONFIG_map_tf_frame,"table_"+std::to_string(i),"Table "+std::to_string(i),0));
+        table_pos,0.4,0.4,params::CONFIG_map_tf_frame,"table_"+std::to_string(i),"Table "+std::to_string(i),0));
     }
   }
   

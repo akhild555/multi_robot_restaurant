@@ -42,8 +42,8 @@ laser = {
     -- goal_poses = {{14, 14, 0}};
   
     map = "../catkin_ws/src/control_stack/maps/monarch.map";
-    start_pose = {10, 6.62, 0};
-    goal_poses = {{10, 6.62, 0}};
+    start_pose = {9.94, 2.23, 0};
+    goal_poses = {{9.94, 2.23, 0}};
     
   --   map = "src/control_stack/maps/outside_grasp.map";
   --   start_pose = {-2.5, -1, 0};
@@ -56,11 +56,7 @@ laser = {
     kRobotRadius = 0.1;
     kSafetyMargin = 0.2;
     kCollisionRollout = 3;
-    color = {0.5, 0.5, 0.0, 1.0};
-
-    use_priority_based_nav = true;
-    kPriorityNavRadiusSquared = 0.44;
-    return_to_wait_location = true;
+    color = {1.0, 0.0, 1.0, 1.0};
   };
   
   frames = {

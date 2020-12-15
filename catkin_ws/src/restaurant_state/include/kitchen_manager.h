@@ -4,6 +4,8 @@
 #include "std_msgs/String.h"
 #include "control_stack/KitchenOrders.h"
 #include "control_stack/RobotDatabase.h"
+#include "control_stack/OrderInfo.h"
+#include "control_stack/OrderExpire.h"
 #include <random>
 #include <numeric>
 #include <string>
@@ -32,8 +34,12 @@ class KitchenManager {
 
   ros::Subscriber robot_status_subscriber;
   ros::Publisher order_publisher;
+  ros::Publisher order_info_publisher;
+  ros::Publisher order_expire_publisher;
 
   control_stack::KitchenOrders order;
+  control_stack::OrderInfo order_info;
+  control_stack::OrderExpire order_expire;
   Table_Status new_table;
   std::vector<Table_Status> table_statuses;
   std::vector<Order_Status> order_statuses;
@@ -43,6 +49,12 @@ class KitchenManager {
   int counter = 0;
   bool food_order = true;
   bool drinks_order = true;
+  bool random_generation = false;
+  int seed = -9;
+  float avg_meal_time = 300.0;
+  float std_meal_time = 50.0;
+  float avg_clean_time = 20.0;
+  float std_clean_time = 4.0;
 
 
 
@@ -69,6 +81,7 @@ class KitchenManager {
           {
             // clean up table
             ROS_DEBUG("Table %d is vacant", order_statuses[i].table_number);
+            orderExpired(i);
             createCleanOrder(i, order_statuses[i].table_number);
             int tb = order_statuses[i].table_number - 1;
             table_statuses[tb].occupied = false;
@@ -99,6 +112,17 @@ class KitchenManager {
       if (!one_order_only) {
         randOrderGenerator();
       }
+  }
+
+  void orderExpired(int order_ind){
+    order_expire.stamp = ros::Time::now();
+    order_expire.order_number = order_statuses[order_ind].order_number;
+    order_expire.table_number = order_statuses[order_ind].table_number;
+    publishOrderExpired();    
+  }
+
+  void publishOrderExpired(){
+    order_expire_publisher.publish(order_expire);
   }
 
   void createCleanOrder(int order_idx, int table_num){
@@ -154,10 +178,8 @@ class KitchenManager {
 
     // count how many tables are occupied (weight is zero)
     int zero_weight_counter = 0;
-    for (int i= 0; i < table_weights.size(); i++)
-    {
-      if (table_weights[i] == 0.0)
-      {
+    for (int i= 0; i < table_weights.size(); i++) {
+      if (table_weights[i] == 0.0) {
         zero_weight_counter++;
       }
     } 
@@ -166,11 +188,7 @@ class KitchenManager {
     if (zero_weight_counter != table_weights.size()){
       double sum_of_weights = 1.0;
       int gen_table_num = 0;
-
-      std::random_device pub_freq; // obtain a random number from hardware
-      std::mt19937 gen(pub_freq()); // seed the generator
-      std::uniform_real_distribution<> distr(0.0, sum_of_weights); // define range
-      double rand_num = distr(gen);
+      double rand_num = randNumForOrder(sum_of_weights);
 
       for (int i= 0; i < table_weights.size(); i++) {
         // std::cout << "Random number = " << rand_num << std::endl;
@@ -183,37 +201,68 @@ class KitchenManager {
       }
 
       // std::cout << "Generated Table number = " << gen_table_num << std::endl;
-      orderFood();
       orderDrinks();
+      orderFood();
       createMealOrder(gen_table_num);
     }
   }
 
+  double randNumForOrder(double sum_of_weights){
+      std::random_device pub_freq;
+      if (random_generation){
+        std::mt19937 gen(pub_freq()); // seed the generator
+        std::uniform_real_distribution<> distr(0.0, sum_of_weights); // define range
+        double rand_num = distr(gen);
+        return rand_num;
+      }
+      else{
+        std::mt19937 gen(seed); // seed the generator
+        std::uniform_real_distribution<> distr(0.0, sum_of_weights); // define range
+        double rand_num = distr(gen);
+        return rand_num;
+      }
+  }
+
   void orderFood() {
     std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(0, 1);
-    food_order = distr(gen);
+    if (random_generation){
+      std::mt19937 gen(rd());
+      std::uniform_int_distribution<> distr(0, 1);
+      food_order = distr(gen);
+    }
+    else{
+      std::mt19937 gen(seed);
+      std::uniform_int_distribution<> distr(0, 1);
+      food_order = distr(gen);
+    }
+
+    if (food_order == false && drinks_order == false)    {
+      food_order = true;
+    }
   }
 
   void orderDrinks() {
     std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(0, 1);
-    drinks_order = distr(gen);
-    if (food_order == false && drinks_order == false)    {
-      drinks_order = true;
+    if (random_generation){
+      std::mt19937 gen(rd());
+      std::uniform_int_distribution<> distr(0, 1);
+      drinks_order = distr(gen);
+    }
+    else{
+      std::mt19937 gen(seed);
+      std::uniform_int_distribution<> distr(0, 1);
+      drinks_order = distr(gen);
     }
   }
 
   void storeOrderStatus()  {
     // customer meal time generator
-    std::default_random_engine generator_meal;
-    std::normal_distribution<double> distribution_meal(300.0,30.0);
+    std::default_random_engine generator_meal(time(0));
+    std::normal_distribution<double> distribution_meal(avg_meal_time, std_meal_time);
     
     // table cleanup time generator
-    std::default_random_engine generator_clean;
-    std::normal_distribution<double> distribution_clean(20.0,4.0);
+    std::default_random_engine generator_clean(time(0));
+    std::normal_distribution<double> distribution_clean(avg_clean_time, std_clean_time);
 
     Order_Status current_order;
     current_order.order_number = counter;
@@ -224,7 +273,7 @@ class KitchenManager {
       current_order.order_type = "cleanup";
     }   
     else {
-      current_order.customer_max_time =  distribution_meal(generator_meal);  
+      current_order.customer_max_time =  distribution_meal(generator_meal); 
       current_order.order_type = "meal";
     }
     order_statuses.push_back(current_order);
@@ -249,11 +298,24 @@ class KitchenManager {
     storeTableStatus(table_num);
     storeOrderStatus();
     publishKitchenOrders();
+
+    order_info.stamp = ros::Time::now();
+    order_info.order_number = counter;
+    order_info.table_number = table_num;
+    // ROS_INFO("customer max time = %f", order_statuses[-1].customer_max_time);
+    order_info.order_duration = order_statuses.back().customer_max_time;
+    publishOrderInfo();
   }
+  
   
   void publishKitchenOrders()   {
     order_publisher.publish(order);
     ROS_INFO("Published order %i", order.order_number);
+  }
+
+  void publishOrderInfo()   {
+    order_info_publisher.publish(order_info);
+    ROS_INFO("Published order_info %i", order.order_number);
   }
 
   
@@ -276,6 +338,10 @@ public:
 
     order_publisher = nh.advertise<control_stack::KitchenOrders>("/kitchen_state", 100);
     ROS_INFO("Kitchen manager ready");
+
+
+    order_info_publisher = nh.advertise<control_stack::OrderInfo>("/order_info", 100);
+    order_expire_publisher = nh.advertise<control_stack::OrderExpire>("/order_expire", 100);
 
     robot_status_subscriber = nh.subscribe("/robot_database",
           1, &KitchenManager::RobotStatusCallback, this);

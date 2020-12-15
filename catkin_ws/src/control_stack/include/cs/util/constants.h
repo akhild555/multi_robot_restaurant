@@ -32,6 +32,7 @@ static constexpr float kSqrtTwo = 1.414213562;
 namespace constants {
 static constexpr auto kPositionTopic = "/localization_position";
 static constexpr auto kPositionwithIndexTopic = "/robot_position";
+static constexpr auto kPositionwithIndexTopic_patron = "/patron_position";
 static constexpr auto kCommandVelocityTopic = "/mobile_base/commands/velocity";
 static constexpr auto kOdomTopic = "/odom";
 static constexpr auto kLaserTopic = "/scan";

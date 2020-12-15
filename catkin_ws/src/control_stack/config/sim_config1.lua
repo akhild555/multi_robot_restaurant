@@ -42,8 +42,8 @@ pf = {
   -- goal_poses = {{14, 14, 0}};
 
   map = "../catkin_ws/src/control_stack/maps/monarch.map";
-  start_pose = {12, 0.73, 0};
-  goal_poses = {{12, 0.73, 0}};
+  start_pose = {13.77, 2.23, 0};
+  goal_poses = {{13.77, 2.23, 0}};
   
 --   map = "src/control_stack/maps/outside_grasp.map";
 --   start_pose = {-2.5, -1, 0};
@@ -57,6 +57,10 @@ pf = {
   kSafetyMargin = 0.2;
   kCollisionRollout = 3;
   color = {0.0, 1.0, 0.0, 1.0};
+  
+  use_priority_based_nav = true;
+  kPriorityNavRadiusSquared = 0.44;
+  return_to_wait_location = true;
 };
 
 frames = {

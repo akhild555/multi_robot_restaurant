@@ -37,7 +37,7 @@ public:
   std::vector<std::vector<int>> cost_matrix;
   // Functions
   CostCalculation(){
-    task_alloc_memory = {0,0,0,0};
+    task_alloc_memory = {0,0,0,0,0,0,0,0};
   };
   // Get New Tasks
   void all_tasks(const control_stack::KitchenOrders& msg);

@@ -35,9 +35,12 @@ class NavController : public Controller {
       global_path_finder_;
   path_finding::AStar<5, 500, false> local_path_finder_;
   std::vector<util::Pose> goal_list_;
+  std::vector<util::Pose> patron_goal_list_;
   util::Pose current_goal_;
+  util::Pose start_position_;
   size_t current_goal_index_;
   bool robot_active_;
+  bool patron_active_;
   bool current_goal_reached_;
   void RefreshGoal();
 
@@ -52,12 +55,16 @@ class NavController : public Controller {
   ~NavController() = default;
 
   std::pair<ControllerType, util::Twist> Execute() override;
+  std::pair<ControllerType, util::Twist> ExecutePatron() override;
 
   void Reset() override;
 
   void UpdateGoal(std::vector<util::Pose> new_goal_list) override;
+  void UpdatePatronGoal(std::vector<util::Pose> new_patron_goal_list) override;
+  void RefreshPatronGoal();
 
   bool isRobotActive() override;
+  bool isPatronActive() override;
   bool Completed_Order() override;
 
 };

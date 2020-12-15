@@ -212,8 +212,11 @@ class StateMachine {
   ControllerList controller_list_;
   std::string pub_sub_prefix_;
   int robot_index_;
+<<<<<<< HEAD
   int patron_index_;
   // int old_order_number_ = 0;
+=======
+>>>>>>> 5ef03c1f4bf60b4077d384fbe356eb04555e8c3f
   int order_number_ = 0;
   ros::Subscriber robot_database_subscriber_;
   control_stack::RobotDatabase robot_database_;
@@ -349,8 +352,17 @@ class StateMachine {
                          motion_planner_,
                          cs::controllers::ControllerType::NAVIGATION),
         pub_sub_prefix_(pub_sub_prefix),
+<<<<<<< HEAD
         robot_index_(robot_index),
         patron_index_(patron_index) {}
+=======
+        robot_index_(robot_index) {
+          robot_database_subscriber_ = n->subscribe("/robot_database",
+                                                    1,
+                                                    &StateMachine::StateRobotDatabaseCallback,
+                                                    this);
+        }
+>>>>>>> 5ef03c1f4bf60b4077d384fbe356eb04555e8c3f
 
   Eigen::Affine2f GetLaserOffset() {
     Eigen::Affine2f a = Eigen::Affine2f::Identity();
@@ -494,6 +506,7 @@ class StateMachine {
 
     
 
+<<<<<<< HEAD
     state_estimator_->UpdateLastCommand(command);
     PublishTransforms();
     state_estimator_->Visualize(&(dpw_->particle_pub_));
@@ -528,6 +541,8 @@ class StateMachine {
     // }
     dpw_ ->position_with_index_pub_patron_.publish(msg);
 
+=======
+>>>>>>> 5ef03c1f4bf60b4077d384fbe356eb04555e8c3f
     state_estimator_->UpdateLastCommand(command);
     PublishTransforms();
     state_estimator_->Visualize(&(dpw_->particle_pub_));

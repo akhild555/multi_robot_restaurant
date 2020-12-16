@@ -171,7 +171,7 @@ class PatronManager {
     void patronGoToTable(int patron_id) {
         patron_assgn.stamp = ros::Time::now();
         // ROS_INFO("Patron ID being published: %d", patron_id + 4);
-        patron_assgn.patron_index = patron_id + number_of_patrons;
+        patron_assgn.patron_index = patron_id + number_of_patrons + 4;
         patron_assgn.table_number = patron_statuses[patron_id].table_number;
 
         std::string table_number = "Table_" + std::to_string(patron_statuses[patron_id].table_number);
@@ -187,8 +187,8 @@ class PatronManager {
 
     void patronLeave(int patron_id) {
         patron_assgn.stamp = ros::Time::now();
-        ROS_INFO("patronLeave ID being published: %d", patron_id + number_of_patrons);
-        patron_assgn.patron_index = patron_id + number_of_patrons;
+        ROS_INFO("patronLeave ID being published: %d", patron_id + number_of_patrons + 4);
+        patron_assgn.patron_index = patron_id + number_of_patrons + 4;
         patron_assgn.table_number = patron_statuses[patron_id].table_number;
 
         std::string patron_num = "patron_" + std::to_string(patron_id);

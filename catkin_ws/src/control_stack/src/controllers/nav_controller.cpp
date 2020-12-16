@@ -43,8 +43,11 @@ CONFIG_STRING(base_link_tf_frame, "frames.base_tf_frame");
 CONFIG_STRING(laser_tf_frame, "frames.laser_tf_frame");
 
 CONFIG_VECTOR3FLIST(goal_poses, "pf.goal_poses");
+CONFIG_VECTOR3F(start_pose, "pf.start_pose");
+CONFIG_BOOL(return_to_wait_location, "pf.return_to_wait_location");
 
 }  // namespace params
+
 
 NavController::NavController(
     cs::main::DebugPubWrapper* dpw,
@@ -64,6 +67,7 @@ NavController::NavController(
                          params::CONFIG_safety_margin,
                          params::CONFIG_local_inflation),
       current_goal_(params::CONFIG_goal_poses.front()),
+      start_position_(params::CONFIG_start_pose),
       current_goal_index_(-1),
       robot_active_(false),
       current_goal_reached_(false) {}
@@ -156,9 +160,11 @@ void NavController::RefreshGoal() {
       current_goal_reached_ = false;
     } else {
       // no more goals in the list
-      ROS_DEBUG("No goals ROBOT INACTIVE");
+      ROS_DEBUG("No goals ROBOT GOING TO WAIT");
       robot_active_ = false;
-      
+      if (params::CONFIG_return_to_wait_location) {
+        current_goal_ = start_position_;
+      }
     }
   } else {
     ROS_DEBUG("Not at goal %f, %f, Active: %d", current_goal_.tra.x(), current_goal_.tra.y(), robot_active_);

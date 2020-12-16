@@ -83,6 +83,8 @@ CONFIG_FLOAT(robot_radius, "pf.kRobotRadius");
 CONFIG_FLOAT(safety_margin, "pf.kSafetyMargin");
 
 CONFIG_FLOATLIST(robot_color, "pf.color");
+CONFIG_BOOL(use_priority_based_nav, "pf.use_priority_based_nav");
+CONFIG_FLOAT(kPriorityNavRadiusSquared, "pf.kPriorityNavRadiusSquared");
 
 }  // namespace params
 
@@ -335,10 +337,10 @@ class StateMachine {
       if (robot_index_ == (int)other_robot.robot_index) {
         continue;
       }
-      if((robot_index_ < (int)other_robot.robot_index) && other_robot.robot_active) {
+      if((order_number_ < (int)other_robot.order_number) && other_robot.robot_active) {
         float distance_squared = pow((current_pose.linear.x - other_robot.robot_position.linear.x),2) +
             pow((current_pose.linear.y - other_robot.robot_position.linear.y),2);
-        if (distance_squared < 0.44) {
+        if (distance_squared < params::CONFIG_kPriorityNavRadiusSquared) {
           return true;
         }
       }
@@ -423,7 +425,7 @@ class StateMachine {
         est_pose, laser_, &(dpw_->detected_walls_pub_));
 
     util::Twist command;
-    if (isOtherRobotNear()) {
+    if (isOtherRobotNear() && params::CONFIG_use_priority_based_nav) {
       ROS_INFO("Robot stopping to give way");
       command = util::Twist();
     } else {

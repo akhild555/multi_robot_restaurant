@@ -36,6 +36,7 @@ class NavController : public Controller {
   path_finding::AStar<5, 500, false> local_path_finder_;
   std::vector<util::Pose> goal_list_;
   util::Pose current_goal_;
+  util::Pose start_position_;
   size_t current_goal_index_;
   bool robot_active_;
   bool current_goal_reached_;

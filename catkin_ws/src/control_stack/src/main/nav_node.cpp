@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
                                          &cs::main::StateMachine::UpdateOdom,
                                          &state_machine);
   ros::Subscriber goal_sub = n.subscribe("/robot_goal", 
-                                        3,
+                                        8,
                                         &cs::main::StateMachine::UpdateGoal,
                                         &state_machine);
                                         

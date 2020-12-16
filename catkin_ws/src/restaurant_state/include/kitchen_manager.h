@@ -49,6 +49,12 @@ class KitchenManager {
   int counter = 0;
   bool food_order = true;
   bool drinks_order = true;
+  bool random_generation = false;
+  int seed = -9;
+  float avg_meal_time = 300.0;
+  float std_meal_time = 50.0;
+  float avg_clean_time = 20.0;
+  float std_clean_time = 4.0;
 
 
 
@@ -172,10 +178,8 @@ class KitchenManager {
 
     // count how many tables are occupied (weight is zero)
     int zero_weight_counter = 0;
-    for (int i= 0; i < table_weights.size(); i++)
-    {
-      if (table_weights[i] == 0.0)
-      {
+    for (int i= 0; i < table_weights.size(); i++) {
+      if (table_weights[i] == 0.0) {
         zero_weight_counter++;
       }
     } 
@@ -184,11 +188,7 @@ class KitchenManager {
     if (zero_weight_counter != table_weights.size()){
       double sum_of_weights = 1.0;
       int gen_table_num = 0;
-
-      std::random_device pub_freq; // obtain a random number from hardware
-      std::mt19937 gen(pub_freq()); // seed the generator
-      std::uniform_real_distribution<> distr(0.0, sum_of_weights); // define range
-      double rand_num = distr(gen);
+      double rand_num = randNumForOrder(sum_of_weights);
 
       for (int i= 0; i < table_weights.size(); i++) {
         // std::cout << "Random number = " << rand_num << std::endl;
@@ -207,11 +207,35 @@ class KitchenManager {
     }
   }
 
+  double randNumForOrder(double sum_of_weights){
+      std::random_device pub_freq;
+      if (random_generation){
+        std::mt19937 gen(pub_freq()); // seed the generator
+        std::uniform_real_distribution<> distr(0.0, sum_of_weights); // define range
+        double rand_num = distr(gen);
+        return rand_num;
+      }
+      else{
+        std::mt19937 gen(seed); // seed the generator
+        std::uniform_real_distribution<> distr(0.0, sum_of_weights); // define range
+        double rand_num = distr(gen);
+        return rand_num;
+      }
+  }
+
   void orderFood() {
     std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(0, 1);
-    food_order = distr(gen);
+    if (random_generation){
+      std::mt19937 gen(rd());
+      std::uniform_int_distribution<> distr(0, 1);
+      food_order = distr(gen);
+    }
+    else{
+      std::mt19937 gen(seed);
+      std::uniform_int_distribution<> distr(0, 1);
+      food_order = distr(gen);
+    }
+
     if (food_order == false && drinks_order == false)    {
       food_order = true;
     }
@@ -219,19 +243,26 @@ class KitchenManager {
 
   void orderDrinks() {
     std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(0, 1);
-    drinks_order = distr(gen);
+    if (random_generation){
+      std::mt19937 gen(rd());
+      std::uniform_int_distribution<> distr(0, 1);
+      drinks_order = distr(gen);
+    }
+    else{
+      std::mt19937 gen(seed);
+      std::uniform_int_distribution<> distr(0, 1);
+      drinks_order = distr(gen);
+    }
   }
 
   void storeOrderStatus()  {
     // customer meal time generator
     std::default_random_engine generator_meal(time(0));
-    std::normal_distribution<double> distribution_meal(300.0,45.0);
+    std::normal_distribution<double> distribution_meal(avg_meal_time, std_meal_time);
     
     // table cleanup time generator
     std::default_random_engine generator_clean(time(0));
-    std::normal_distribution<double> distribution_clean(20.0,4.0);
+    std::normal_distribution<double> distribution_clean(avg_clean_time, std_clean_time);
 
     Order_Status current_order;
     current_order.order_number = counter;

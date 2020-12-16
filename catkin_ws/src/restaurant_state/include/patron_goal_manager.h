@@ -37,6 +37,8 @@ class PatronManager {
     std::vector<Patron_Status> patron_statuses;
     control_stack::OrderInfo oldest_order;
     int number_of_patrons = 0;
+    bool random_generation = false;
+    int seed = -9;
 
     void OrderInfoCallback(const control_stack::OrderInfo& msg)
     {
@@ -72,16 +74,23 @@ class PatronManager {
     void patronDoTask(int patron_id) {
         float x = 0.0;
         float y = 0.0;
+        int goal = 0;
         patron_assgn.stamp = ros::Time::now();
         patron_assgn.patron_index = patron_id + number_of_patrons;
-        // patron_assgn.table_number = patron_statuses[patron_id].table_number;
 
         // send patron to bathroom or bar
         std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> distr(0, 2);
-        int goal = distr(gen);
-        ROS_ERROR("patron goal generated: %d", goal);
+        if (random_generation){
+            std::mt19937 gen(rd());
+            std::uniform_int_distribution<> distr(0, 2);
+            goal = distr(gen);
+        }
+        else{
+            std::mt19937 gen(seed);
+            std::uniform_int_distribution<> distr(0, 2);
+            goal = distr(gen);
+        }
+        ROS_INFO("patron goal generated: %d", goal);
 
         if (goal == 0){
             x = mon_restaurant_config["Bathroom"]["Female"]["x"];

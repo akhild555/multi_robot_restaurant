@@ -1,0 +1,4 @@
+time stamp
+uint32 order_number
+uint32 table_number
+float64 order_duration

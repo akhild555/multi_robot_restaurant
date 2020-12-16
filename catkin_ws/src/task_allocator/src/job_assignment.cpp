@@ -36,7 +36,7 @@ int main(int argc, char **argv)
   ros::Publisher job_assignment = n.advertise<control_stack::RobotGoal>("/robot_goal", 1000);
   // Set Callback Function Rate
   ros::Rate loop_rate(1);
-  std::vector<std::vector<float>> wait_loc = {{10.5, 0.73}, {12, 0.73}, {10, 5.12}, {10, 6.62}};
+  std::vector<std::vector<float>> wait_loc = {{13.77,0.73} , {13.77, 2.23} , {10, 5.12}, {10, 6.62}};
   std::vector<int> wait_occ = {0,0,0,0};
   std::vector<int> rob_occ = {0,0,0,0};
   // Set Config File to Be Used

@@ -57,6 +57,7 @@
 #include "shared/util/timer.h"
 
 #include <control_stack/RobotPosition.h>
+#include <control_stack/PatronPosition.h>
 
 namespace cs {
 namespace main {
@@ -64,6 +65,7 @@ namespace main {
 struct DebugPubWrapper {
   ros::Publisher position_pub_;
   ros::Publisher position_with_index_pub_;
+  ros::Publisher position_with_index_pub_patron_;
   ros::Publisher modified_laser_pub_;
   ros::Publisher particle_pub_;
   ros::Publisher map_pub_;
@@ -88,6 +90,9 @@ struct DebugPubWrapper {
     
     position_with_index_pub_ = n->advertise<control_stack::RobotPosition>(
         constants::kPositionwithIndexTopic, 1);
+
+    position_with_index_pub_patron_ = n->advertise<control_stack::PatronPosition>(
+        constants::kPositionwithIndexTopic_patron, 1);
 
     modified_laser_pub_ = n->advertise<sensor_msgs::LaserScan>(
         pub_sub_prefix + "/scan_modified", 10);

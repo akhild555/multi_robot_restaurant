@@ -70,6 +70,7 @@ NavController::NavController(
       start_position_(params::CONFIG_start_pose),
       current_goal_index_(-1),
       robot_active_(false),
+      patron_active_(false),
       current_goal_reached_(false) {}
       // completed_order_(false),
       // counter(0) 
@@ -172,6 +173,35 @@ void NavController::RefreshGoal() {
 
 }
 
+void NavController::RefreshPatronGoal() {
+
+  if (motion_planner_.AtPose(current_goal_)) {
+    ROS_DEBUG("Current goal reached %f %f", current_goal_.tra.x(), current_goal_.tra.y());
+    current_goal_reached_ = true;
+  }
+
+  if (current_goal_reached_) {
+    ROS_DEBUG("Reached curr goal: %f, %f", current_goal_.tra.x(), current_goal_.tra.y());
+    // reached current goal
+    if (current_goal_index_ + 1 < patron_goal_list_.size()) {
+      // new goal exists
+      ++current_goal_index_;
+      current_goal_ = patron_goal_list_[current_goal_index_];
+      ROS_INFO("New Goal: %f , %f, %f PATRON ACTIVE", current_goal_.tra.x(), current_goal_.tra.y(), current_goal_.rot);
+      patron_active_ = true;
+      current_goal_reached_ = false;
+    } else {
+      // no more goals in the list
+      ROS_DEBUG("No goals PATRON INACTIVE");
+      patron_active_ = false;
+      
+    }
+  } else {
+    ROS_DEBUG("Not at goal %f, %f, Active: %d", current_goal_.tra.x(), current_goal_.tra.y(), patron_active_);
+  }
+
+}
+
 std::pair<ControllerType, util::Twist> NavController::Execute() {
   const auto est_pose = state_estimator_.GetEstimatedPose();
   const auto laser_points_wf = laser_.TransformPointsFrameSparse(
@@ -212,14 +242,62 @@ std::pair<ControllerType, util::Twist> NavController::Execute() {
   return {ControllerType::NAVIGATION, command};
 }
 
+std::pair<ControllerType, util::Twist> NavController::ExecutePatron() {
+  const auto est_pose = state_estimator_.GetEstimatedPose();
+  const auto laser_points_wf = laser_.TransformPointsFrameSparse(
+      est_pose.ToAffine(), [this](const float& d) {
+        return (d > laser_.ros_laser_scan_.range_min) &&
+               (d <= laser_.ros_laser_scan_.range_max);
+      });
+
+  const float total_margin =
+      (params::CONFIG_robot_radius + params::CONFIG_safety_margin + kEpsilon) *
+      params::CONFIG_local_inflation;
+  if (!IsPointCollisionFree(est_pose.tra, laser_points_wf, total_margin)) {
+    return {ControllerType::ESCAPE_COLLISION, {}};
+  }
+
+  RefreshPatronGoal();
+
+  global_path_finder_.PlanPath(est_pose.tra, current_goal_.tra);
+  const auto global_path = global_path_finder_.GetPath();
+  DrawPath(dpw_, global_path, "global_path");
+  const Eigen::Vector2f global_waypoint = GetGlobalPathWaypoint(
+      est_pose, global_path, laser_points_wf, total_margin);
+
+  const auto local_path = local_path_finder_.FindPath(
+      obstacle_detector_.GetDynamicFeatures(), est_pose.tra, global_waypoint);
+  util::Pose local_waypoint =
+      GetLocalPathPose(est_pose, global_waypoint, current_goal_, local_path);
+  DrawPath(dpw_, local_path, "local_path");
+  if (local_path.waypoints.empty()) {
+    ROS_INFO("Local path planner failed.");
+  }
+
+  DrawGoal(dpw_, local_waypoint);
+
+  const util::Twist command = motion_planner_.DriveToPose(
+      obstacle_detector_.GetDynamicFeatures(), local_waypoint);
+
+  return {ControllerType::NAVIGATION, command};
+}
+
 void NavController::Reset() {}
 
 void NavController::UpdateGoal(std::vector<util::Pose> new_goal_list) {
   goal_list_.insert(goal_list_.end(), new_goal_list.begin(), new_goal_list.end());
 }
 
+void NavController::UpdatePatronGoal(std::vector<util::Pose> new_patron_goal_list) {
+  patron_goal_list_.insert(patron_goal_list_.end(), new_patron_goal_list.begin(), new_patron_goal_list.end());
+}
+
 bool NavController::isRobotActive() {
   return robot_active_;
+}
+
+bool NavController::isPatronActive() {
+  return patron_active_;
 }
 
 bool NavController::Completed_Order() {

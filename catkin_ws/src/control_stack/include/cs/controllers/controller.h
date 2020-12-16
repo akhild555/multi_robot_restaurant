@@ -76,12 +76,15 @@ class Controller {
   virtual ~Controller() = default;
 
   virtual std::pair<ControllerType, util::Twist> Execute() = 0;
+  virtual std::pair<ControllerType, util::Twist> ExecutePatron() = 0;
 
   virtual void Reset() = 0;
 
   virtual void UpdateGoal(std::vector<util::Pose>) = 0;
+  virtual void UpdatePatronGoal(std::vector<util::Pose>) = 0;
 
   virtual bool isRobotActive() = 0;
+  virtual bool isPatronActive() = 0;
   virtual bool Completed_Order() = 0;
 };
 

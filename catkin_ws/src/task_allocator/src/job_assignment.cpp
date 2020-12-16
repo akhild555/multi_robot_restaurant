@@ -57,7 +57,7 @@ int main(int argc, char **argv)
   else{
     stagger_n_rob = 0;
   }
-
+  bool first_round = true;
   while (ros::ok())
   {
     // std::cout<<"Num tasks in main func: "<<cost_func.num_tasks<<std::endl;
@@ -65,8 +65,8 @@ int main(int argc, char **argv)
     // Check There Are Tasks to Allocate and Robots Available
     // std::cout<<"job_assignment: No. Remaining Orders: "<< cost_func.all_orders.size()<<std::endl;
     // std::cout<<"job_assignment: Num robots: "<< cost_func.num_robots<<std::endl;
-
-    if(cost_func.all_orders.size() && cost_func.num_robots>stagger_n_rob) // Assign when stagger_n_robots are free
+    //Continously assign for first round even if stagger_n_rob robots are not free
+    if(cost_func.all_orders.size() && (cost_func.num_robots>stagger_n_rob || first_round))  // Assign when stagger_n_robots are free
     // if(cost_func.all_orders.size()>1 && cost_func.num_robots>1) // Assign 2 robots, Bug: Robot 1 goes to Robot 0 table
     // if(cost_func.all_orders.size() && cost_func.num_robots>0)
     {
@@ -109,6 +109,10 @@ int main(int argc, char **argv)
       {
         // Get Robot Index
         robot_assgn.robot_index = cost_func.robots[i];
+        if (robot_assgn.robot_index == 3)
+        {
+        first_round = false;
+        }
         // Get Table Number
         robot_assgn.table_number = cost_func.assigned_tasks[assignments[i]];
         std::cout << "Robot " << robot_assgn.robot_index << " is assigned to Table " << robot_assgn.table_number << std::endl;

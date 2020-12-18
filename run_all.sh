@@ -28,7 +28,7 @@ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_conf
 cd catkin_ws
 devel/lib/restaurant_state/environment_manager &
 # cd catkin_ws
-# devel/lib/task_allocator/job_assignment &
+devel/lib/task_allocator/job_assignment &
 cd ..
 rosrun rviz rviz -d rosbuild_ws/simulator/visualization.rviz &
 

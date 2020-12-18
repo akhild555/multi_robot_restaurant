@@ -76,7 +76,7 @@ class PatronManager {
         float y = 0.0;
         int goal = 0;
         patron_assgn.stamp = ros::Time::now();
-        patron_assgn.patron_index = patron_id + number_of_patrons;
+        patron_assgn.patron_index = patron_id + number_of_patrons + 4;
 
         // send patron to bathroom or bar
         std::random_device rd;

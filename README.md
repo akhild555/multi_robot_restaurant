@@ -43,12 +43,25 @@ Currently, only ROS Melodic running on *buntu 18.04 is supported. Running the co
  devel/lib/control_stack/nav_node src/control_stack/config/sim_config7.lua 7
  ```
  - To run the patrons on the simulator, from inside `catkin_ws/` run: <br />
- For Patron ID: 0-3
+ For Patron ID: 0-16
  ```
  devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config0.lua 8
  devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config1.lua 9
  devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config2.lua 10
  devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config3.lua 11
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config4.lua 12
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config5.lua 13
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config6.lua 14
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config7.lua 15
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config8.lua 16
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config9.lua 17
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config10.lua 18
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config11.lua 19
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config12.lua 20
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config13.lua 21
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config14.lua 22
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config15.lua 23
+ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config16.lua 24
  ```
  
  - To run the restaurant state on the simulator, from inside `catkin_ws/` run:

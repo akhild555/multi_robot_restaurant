@@ -26,8 +26,34 @@ devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_conf
 cd catkin_ws
 devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config3.lua 11 &
 cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config4.lua 12 &
+cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config5.lua 13 &
+cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config6.lua 14 &
+cd catkin_ws 
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config7.lua 15 &
+cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config8.lua 16 &
+cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config9.lua 17 &
+cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config10.lua 18 &
+cd catkin_ws 
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config11.lua 19 &
+cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config12.lua 20 &
+cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config13.lua 21 &
+cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config14.lua 22 &
+cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config15.lua 23 &
+cd catkin_ws
+devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config16.lua 24 &
+cd catkin_ws
 devel/lib/restaurant_state/environment_manager &
-# cd catkin_ws
+cd catkin_ws
 devel/lib/task_allocator/job_assignment &
 cd ..
 rosrun rviz rviz -d rosbuild_ws/simulator/visualization.rviz &

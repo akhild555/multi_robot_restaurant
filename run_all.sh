@@ -17,24 +17,24 @@ devel/lib/control_stack/nav_node src/control_stack/config/sim_config3.lua 3 &
 # devel/lib/control_stack/nav_node src/control_stack/config/sim_config6.lua 6 &
 # cd catkin_ws
 # devel/lib/control_stack/nav_node src/control_stack/config/sim_config7.lua 7 &
-cd catkin_ws
-devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config0.lua 8 &
-cd catkin_ws
-devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config1.lua 9 &
-cd catkin_ws
-devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config2.lua 10 &
-cd catkin_ws
-devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config3.lua 11 &
-cd catkin_ws
-devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config4.lua 12 &
-cd catkin_ws
-devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config5.lua 13 &
-cd catkin_ws
-devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config6.lua 14 &
-cd catkin_ws 
-devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config7.lua 15 &
-cd catkin_ws
-devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config8.lua 16 &
+# cd catkin_ws
+# devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config0.lua 8 &
+# cd catkin_ws
+# devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config1.lua 9 &
+# cd catkin_ws
+# devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config2.lua 10 &
+# cd catkin_ws
+# devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config3.lua 11 &
+# cd catkin_ws
+# devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config4.lua 12 &
+# cd catkin_ws
+# devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config5.lua 13 &
+# cd catkin_ws
+# devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config6.lua 14 &
+# cd catkin_ws 
+# devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config7.lua 15 &
+# cd catkin_ws
+# devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config8.lua 16 &
 cd catkin_ws
 devel/lib/control_stack/patron_nav_node src/control_stack/config/sim_patron_config9.lua 17 &
 cd catkin_ws

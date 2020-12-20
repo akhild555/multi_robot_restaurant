@@ -37,6 +37,8 @@ class PatronManager {
     std::vector<Patron_Status> patron_statuses;
     control_stack::OrderInfo oldest_order;
     int number_of_patrons = 0;
+    int patron_start_ind = 0;
+    int max_patron_tasks = 2;
     bool random_generation = false;
     int seed = -9;
 
@@ -62,11 +64,22 @@ class PatronManager {
     }
 
     void patronGoalCallback(const control_stack::PatronDatabase& msg){
+        int num_patrons_doing_tasks = 0;
         for (int i = 0; i < patron_statuses.size(); i++) {
-            int time_passed = ros::Time::now().sec - patron_statuses[i].arrival_time.sec;
-            if (time_passed > patron_statuses[i].duration / 2 && !patron_statuses[i].task_assigned){
-                patronDoTask(i);
-                patron_statuses[i].task_assigned = true;
+            if (patron_statuses[i].task_assigned == true){
+                num_patrons_doing_tasks++;
+            }
+        }
+
+        if (num_patrons_doing_tasks <= max_patron_tasks){
+            for (int i = 0; i < patron_statuses.size(); i++) {
+                int time_passed = ros::Time::now().sec - patron_statuses[i].arrival_time.sec;
+                if (time_passed > patron_statuses[i].duration / 2 && !patron_statuses[i].task_assigned){
+                    // if (num_patrons_doing_tasks <= max_patron_tasks){ // only two patrons doing tasks at a time
+                    // }
+                    patronDoTask(i);
+                    patron_statuses[i].task_assigned = true;
+                }
             }
         }
     }
@@ -76,7 +89,7 @@ class PatronManager {
         float y = 0.0;
         int goal = 0;
         patron_assgn.stamp = ros::Time::now();
-        patron_assgn.patron_index = patron_id + number_of_patrons + 4;
+        patron_assgn.patron_index = patron_id + patron_start_ind;
 
         // send patron to bathroom or bar
         std::random_device rd;
@@ -139,7 +152,7 @@ class PatronManager {
 
 
     void assignPatronTable() {
-        if (all_orders.size() >= 4){
+        if (all_orders.size() >= 8){
             // check if patron is free and assign order/table to patron
             for (int i = 0; i < patron_statuses.size(); i++) {
                 if (!patron_statuses[i].patron_active)
@@ -171,7 +184,7 @@ class PatronManager {
     void patronGoToTable(int patron_id) {
         patron_assgn.stamp = ros::Time::now();
         // ROS_INFO("Patron ID being published: %d", patron_id + 4);
-        patron_assgn.patron_index = patron_id + number_of_patrons + 4;
+        patron_assgn.patron_index = patron_id + patron_start_ind;
         patron_assgn.table_number = patron_statuses[patron_id].table_number;
 
         std::string table_number = "Table_" + std::to_string(patron_statuses[patron_id].table_number);
@@ -187,11 +200,11 @@ class PatronManager {
 
     void patronLeave(int patron_id) {
         patron_assgn.stamp = ros::Time::now();
-        ROS_INFO("patronLeave ID being published: %d", patron_id + number_of_patrons + 4);
-        patron_assgn.patron_index = patron_id + number_of_patrons + 4;
+        ROS_INFO("patronLeave ID being published: %d", patron_id + patron_start_ind);
+        patron_assgn.patron_index = patron_id + patron_start_ind;
         patron_assgn.table_number = patron_statuses[patron_id].table_number;
 
-        std::string patron_num = "patron_" + std::to_string(patron_id);
+        std::string patron_num = "patron_" + std::to_string(patron_id + patron_start_ind);
         float x = mon_restaurant_config["Outside"][patron_num]["x"];
         float y = mon_restaurant_config["Outside"][patron_num]["y"];
         t.linear.x = x;
@@ -208,8 +221,9 @@ public:
     /**
     * Constructor
     */ 
-    PatronManager(ros::NodeHandle& nh, int num_patrons) {
+    PatronManager(ros::NodeHandle& nh, int num_patrons, int patron_start_index) {
         number_of_patrons = num_patrons;
+        patron_start_ind = patron_start_index;
 
         for (int i = 0; i < num_patrons; i++)
         {

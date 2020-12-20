@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
                                          &cs::main::StateMachine::UpdateOdom,
                                          &state_machine_patron);
   ros::Subscriber goal_sub = n.subscribe("/patron_goal", 
-                                        4,
+                                        17,
                                         &cs::main::StateMachine::UpdatePatronGoal,
                                         &state_machine_patron);
                                         

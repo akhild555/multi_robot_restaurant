@@ -57,6 +57,10 @@ pf = {
   kSafetyMargin = 0.2;
   kCollisionRollout = 3;
   color = {0.545, 0.271, 0.075, 1.0};
+
+  use_priority_based_nav = true;
+  kPriorityNavRadiusSquared = 0.44;
+  return_to_wait_location = true;
 };
 
 frames = {

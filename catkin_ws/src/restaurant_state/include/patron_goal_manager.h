@@ -204,7 +204,7 @@ class PatronManager {
         patron_assgn.patron_index = patron_id + patron_start_ind;
         patron_assgn.table_number = patron_statuses[patron_id].table_number;
 
-        std::string patron_num = "patron_" + std::to_string(patron_id + patron_start_ind);
+        std::string patron_num = "patron_" + std::to_string(patron_id);
         float x = mon_restaurant_config["Outside"][patron_num]["x"];
         float y = mon_restaurant_config["Outside"][patron_num]["y"];
         t.linear.x = x;

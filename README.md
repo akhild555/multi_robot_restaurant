@@ -1,4 +1,4 @@
-# Multi-Robot Restaurant System
+# Multi-Robot Waiter System for Restaurant Automation
 
 Modified full planning and control stack for GRASP LML Service Robots @ Penn with restaurant system specific changes.
 

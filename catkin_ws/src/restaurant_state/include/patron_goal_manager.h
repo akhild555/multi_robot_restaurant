@@ -152,7 +152,7 @@ class PatronManager {
 
 
     void assignPatronTable() {
-        if (all_orders.size() >= 8){
+        if (all_orders.size() >= (24 - patron_start_ind + 1)){
             // check if patron is free and assign order/table to patron
             for (int i = 0; i < patron_statuses.size(); i++) {
                 if (!patron_statuses[i].patron_active)

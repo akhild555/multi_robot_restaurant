@@ -52,9 +52,9 @@ class KitchenManager {
   bool random_generation = false;
   int seed = -9;
   float avg_meal_time = 300.0;
-  float std_meal_time = 50.0;
+  float std_meal_time = 60.0;
   float avg_clean_time = 20.0;
-  float std_clean_time = 4.0;
+  float std_clean_time = 5.0;
 
 
 

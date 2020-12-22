@@ -204,7 +204,8 @@ class PatronManager {
         patron_assgn.patron_index = patron_id + patron_start_ind;
         patron_assgn.table_number = patron_statuses[patron_id].table_number;
 
-        std::string patron_num = "patron_" + std::to_string(patron_id);
+        std::string patron_num = "patron_" + std::to_string(patron_start_ind  + patron_id);
+        ROS_ERROR("Patron ID that got told to go out: %d", patron_start_ind  + patron_id);
         float x = mon_restaurant_config["Outside"][patron_num]["x"];
         float y = mon_restaurant_config["Outside"][patron_num]["y"];
         t.linear.x = x;

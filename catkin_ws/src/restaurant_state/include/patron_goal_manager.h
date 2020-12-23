@@ -39,6 +39,7 @@ class PatronManager {
     int number_of_patrons = 0;
     int patron_start_ind = 0;
     int max_patron_tasks = 2;
+    int patron_task = 0;
     bool random_generation = false;
     int seed = -9;
 
@@ -92,17 +93,23 @@ class PatronManager {
         patron_assgn.patron_index = patron_id + patron_start_ind;
 
         // send patron to bathroom or bar
-        std::random_device rd;
-        if (random_generation){
-            std::mt19937 gen(rd());
-            std::uniform_int_distribution<> distr(0, 2);
-            goal = distr(gen);
+        // std::random_device rd;
+        // if (random_generation){
+        //     std::mt19937 gen(rd());
+        //     std::uniform_int_distribution<> distr(0, 2);
+        //     goal = distr(gen);
+        // }
+        // else{
+        //     std::mt19937 gen(seed);
+        //     std::uniform_int_distribution<> distr(0, 2);
+        //     goal = distr(gen);
+        // }
+
+        if (patron_task > 2){
+            patron_task = 0;
         }
-        else{
-            std::mt19937 gen(seed);
-            std::uniform_int_distribution<> distr(0, 2);
-            goal = distr(gen);
-        }
+        goal = patron_task;
+        patron_task++;
         ROS_INFO("patron goal generated: %d", goal);
 
         if (goal == 0){
@@ -152,19 +159,21 @@ class PatronManager {
 
 
     void assignPatronTable() {
-        if (all_orders.size() >= (24 - patron_start_ind + 1)){
+        if (all_orders.size() >= (1)){
             // check if patron is free and assign order/table to patron
             for (int i = 0; i < patron_statuses.size(); i++) {
                 if (!patron_statuses[i].patron_active)
                 {
+                    if (i > all_orders.size()){
+                        break;
+                    }
                     oldest_order = all_orders.front();
-                    all_orders.erase(all_orders.begin());
-
                     int patron_id = i;
                     ROS_INFO("patron_id %d", patron_id);
                     int order_table_num = oldest_order.table_number;
                     float order_duration = oldest_order.order_duration;
                     storePatronStatus(patron_id, order_table_num, order_duration);                
+                    all_orders.erase(all_orders.begin());
                 }
             }
         }        

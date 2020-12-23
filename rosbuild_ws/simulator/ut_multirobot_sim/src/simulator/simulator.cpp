@@ -420,10 +420,21 @@ void Simulator::publishLaser() {
   for (size_t i = 0; i < robot_pub_subs_.size(); ++i) {
     auto& rps = robot_pub_subs_[i];
     map_.object_lines = baseline_object_lines;
-    for (size_t j = 0; j < robot_pub_subs_.size(); ++j){
-      if (i != j) {
-        for (const auto& l : robot_pub_subs_[j].motion_model->GetLines()) {
-          map_.object_lines.push_back(l);
+    if(i < 4){
+      for (size_t j = 0; j < robot_pub_subs_.size(); ++j){
+        if (i != j) {
+          for (const auto& l : robot_pub_subs_[j].motion_model->GetLines()) {
+            map_.object_lines.push_back(l);
+          }
+        }
+      }
+    }
+    else if(i>4){
+      for (size_t j = 0; j < 4; ++j){
+        if (i != j) {
+          for (const auto& l : robot_pub_subs_[j].motion_model->GetLines()) {
+            map_.object_lines.push_back(l);
+          }
         }
       }
     }
